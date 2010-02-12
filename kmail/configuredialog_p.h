@@ -79,10 +79,10 @@ namespace KMail {
   class IdentityListView;
   class IdentityListViewItem;
 }
+
 namespace Kleo {
-  class BackendConfigWidget;
   class CryptoConfig;
-  }
+}
 
 namespace KPIM {
   class ColorListBox;
@@ -875,25 +875,6 @@ private:
   Kleo::CryptoConfig* mConfig;
 };
 
-class SecurityPageCryptPlugTab : public ConfigModuleTab
-{
-  Q_OBJECT
-public:
-  SecurityPageCryptPlugTab( QWidget * parent = 0 );
-  ~SecurityPageCryptPlugTab();
-
-  QString helpAnchor() const;
-
-  void save();
-
-private:
-  virtual void doLoadOther();
-  //virtual void doResetToDefaultsOther();
-
-private:
-  Kleo::BackendConfigWidget * mBackendConfig;
-};
-
 class KMAIL_EXPORT SecurityPage : public ConfigModuleWithTabs {
   Q_OBJECT
 public:
@@ -905,14 +886,12 @@ public:
   typedef SecurityPageComposerCryptoTab ComposerCryptoTab;
   typedef SecurityPageWarningTab WarningTab;
   typedef SecurityPageSMimeTab SMimeTab;
-  typedef SecurityPageCryptPlugTab CryptPlugTab;
 
 private:
   GeneralTab    *mGeneralTab;
   ComposerCryptoTab *mComposerCryptoTab;
   WarningTab    *mWarningTab;
   SMimeTab      *mSMimeTab;
-  CryptPlugTab  *mCryptPlugTab;
 };
 
 
