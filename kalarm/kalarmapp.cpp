@@ -57,6 +57,7 @@
 #include <netwm.h>
 #include <kdebug.h>
 #include <kshell.h>
+#include <ksystemtrayicon.h>
 
 #include <QObject>
 #include <QTimer>
@@ -771,7 +772,6 @@ bool KAlarmApp::displayTrayIcon(bool show, MainWindow* parent)
 			}
 			mTrayWindow = new TrayWindow(parent ? parent : MainWindow::firstWindow());
 			connect(mTrayWindow, SIGNAL(deleted()), SIGNAL(trayIconToggled()));
-			mTrayWindow->show();
 			emit trayIconToggled();
 
 			if (!checkSystemTray())

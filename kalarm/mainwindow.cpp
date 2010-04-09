@@ -60,6 +60,7 @@
 #include <kaction.h>
 #include <kactioncollection.h>
 #include <kinputdialog.h>
+#include <ksystemtrayicon.h>
 
 #include <kstandardaction.h>
 #include <kiconloader.h>
