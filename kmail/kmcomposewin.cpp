@@ -379,7 +379,11 @@ KMComposeWin::KMComposeWin( KMMessage *aMsg, Composer::TemplateContext context, 
 
   if ( GlobalSettings::self()->useHtmlMarkup() )
     enableHtml();
+  else
+    disableHtml( LetUserConfirm );
 
+
+  
   if ( GlobalSettings::self()->useExternalEditor() ) {
     mEditor->setUseExternalEditor( true );
     mEditor->setExternalEditorPath( GlobalSettings::self()->externalEditor() );
