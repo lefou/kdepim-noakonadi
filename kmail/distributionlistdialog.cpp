@@ -22,11 +22,10 @@
 
 #include "distributionlistdialog.h"
 
-#include <akonadi/collectiondialog.h>
-#include <akonadi/contact/contactgroupsearchjob.h>
-#include <akonadi/contact/contactsearchjob.h>
-#include <akonadi/itemcreatejob.h>
 #include <kpimutils/email.h>
+#include <kabc/resource.h>
+#include <kabc/stdaddressbook.h>
+#include <kabc/distributionlist.h>
 
 #include <KLocale>
 #include <KDebug>
@@ -146,26 +145,19 @@ void DistributionListDialog::setRecipients( const Recipient::List &recipients )
       KABC::Addressee::parseEmailAddress( *it2, name, email );
       if ( !email.isEmpty() ) {
         DistributionListItem *item = new DistributionListItem( mRecipientsList );
-
-        Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-        job->setQuery( Akonadi::ContactSearchJob::Email, email );
-        job->exec();
-
-        const KABC::Addressee::List contacts = job->contacts();
-        if ( contacts.isEmpty() ) {
-          KABC::Addressee contact;
-          contact.setNameFromString( name );
-          contact.insertEmail( email );
-          item->setTransientAddressee( contact, email );
+        KABC::Addressee::List addressees =
+          KABC::StdAddressBook::self( true )->findByEmail( email );
+        if ( addressees.isEmpty() ) {
+          KABC::Addressee a;
+          a.setNameFromString( name );
+          a.insertEmail( email );
+          item->setTransientAddressee( a, email );
           item->setCheckState( 0, Qt::Checked );
         } else {
-          bool isFirst = true;
-          foreach ( const KABC::Addressee &contact, contacts ) {
-            item->setAddressee( contact, email );
-            if ( isFirst ) {
-              item->setCheckState( 0, Qt::Checked );
-              isFirst = false;
-            }
+          KABC::Addressee::List::ConstIterator it3;
+          for( it3 = addressees.constBegin(); it3 != addressees.constEnd(); ++it3 ) {
+            item->setAddressee( *it3, email );
+            if ( it3 == addressees.constBegin() ) item->setCheckState( 0, Qt::Checked );
           }
         }
       }
@@ -181,6 +173,8 @@ void DistributionListDialog::slotTitleChanged( const QString& text )
 void DistributionListDialog::slotUser1()
 {
   bool isEmpty = true;
+
+  KABC::AddressBook *ab = KABC::StdAddressBook::self( true );
 
   for (int i = 0; i < mRecipientsList->topLevelItemCount(); ++i) {
     DistributionListItem *item = static_cast<DistributionListItem *>(
@@ -209,50 +203,49 @@ void DistributionListDialog::slotUser1()
       return;
   }
 
-  Akonadi::ContactGroupSearchJob *job = new Akonadi::ContactGroupSearchJob();
-  job->setQuery( Akonadi::ContactGroupSearchJob::Name, name );
-  job->exec();
-
-  if ( !job->contactGroups().isEmpty() ) {
+  if ( ab->findDistributionListByName( name ) ) {
     KMessageBox::information( this,
       i18nc( "@info", "<para>Distribution list with the given name <resource>%1</resource> "
         "already exists. Please select a different name.</para>", name ) );
     return;
   }
 
-  Akonadi::CollectionDialog dlg( this );
-  dlg.setMimeTypeFilter( QStringList() << KABC::Addressee::mimeType() << KABC::ContactGroup::mimeType() );
-  dlg.setAccessRightsFilter( Akonadi::Collection::CanCreateItem );
-  dlg.setDescription( i18n( "Select the address book folder to store the contact group in:" ) );
-  if ( !dlg.exec() )
-    return;
+  KABC::DistributionList *dlist = ab->createDistributionList( name );
 
-  const Akonadi::Collection targetCollection = dlg.selectedCollection();
-
-  KABC::ContactGroup group( name );
-
-  for ( int i = 0; i < mRecipientsList->topLevelItemCount(); ++i ) {
-    DistributionListItem *item = static_cast<DistributionListItem *>( mRecipientsList->topLevelItem( i ) );
+  for (int i = 0; i < mRecipientsList->topLevelItemCount(); ++i) {
+    DistributionListItem *item = static_cast<DistributionListItem *>(
+        mRecipientsList->topLevelItem( i ));
     if ( item && item->checkState( 0 ) == Qt::Checked ) {
       kDebug() << item->addressee().fullEmail() << item->addressee().uid();
       if ( item->isTransient() ) {
-        Akonadi::Item contactItem( KABC::Addressee::mimeType() );
-        contactItem.setPayload<KABC::Addressee>( item->addressee() );
-
-        Akonadi::ItemCreateJob *job = new Akonadi::ItemCreateJob( contactItem, targetCollection );
-        job->exec();
-
-        group.append( KABC::ContactGroup::ContactGroupReference( QString::number( job->item().id() ) ) );
+        ab->insertAddressee( item->addressee() );
+      }
+      if ( item->email() == item->addressee().preferredEmail() ) {
+        dlist->insertEntry( item->addressee() );
       } else {
-        group.append( KABC::ContactGroup::Data( item->addressee().realName(), item->email() ) );
+        dlist->insertEntry( item->addressee(), item->email() );
       }
     }
   }
 
-  Akonadi::Item groupItem( KABC::ContactGroup::mimeType() );
-  groupItem.setPayload<KABC::ContactGroup>( group );
+  // let the resource know that the data has changed
+  KABC::Resource *resource = dlist->resource();
+  resource->insertDistributionList( dlist );
 
-  new Akonadi::ItemCreateJob( groupItem, targetCollection );
+  // save the resource
+  bool saveError = true;
+  KABC::Ticket *ticket = ab->requestSaveTicket( resource );
+  if ( ticket ) {
+    if ( ab->save( ticket ) ) {
+      saveError = false;
+    }
+    else
+      ab->releaseSaveTicket( ticket );
+  }
+
+  if ( saveError ) {
+    kWarning() << "Couldn't save new addresses in the distribution list just created to the address book";
+  }
 
   close();
 }
