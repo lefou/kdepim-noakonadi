@@ -29,7 +29,7 @@
 #include "korganizer/korganizerinterface.h"
 #include "korganizer/stdcalendar.h"
 
-#include <akonadi/contact/contactsearchjob.h>
+#include <KABC/StdAddressBook>
 
 #include <KCal/CalendarResources>
 #include <KCal/CalHelper>
@@ -94,6 +94,9 @@ Planner::Planner( KontactInterface::Plugin *plugin, QWidget *parent )
 
   mCalendar = KOrg::StdCalendar::self();
   mCalendar->load();
+
+  mAddressBook = StdAddressBook::self();
+  mAddressBook->load();
 
   connect( mCalendar, SIGNAL(calendarChanged()), SLOT(updateView()) );
   connect( mPlugin->core(), SIGNAL(dayChanged(const QDate&)), SLOT(updateView()) );
@@ -621,11 +624,8 @@ void Planner::initSdList( const QDate &date )
 {
   mDates.clear();
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob( this );
-  job->exec();
-
-  Q_FOREACH ( const Addressee &addressee, job->contacts() ) {
-    const QDate birthday = addressee.birthday().date();
+  Q_FOREACH ( const Addressee &addressee, mAddressBook->allAddressees() ) {
+    QDate birthday = addressee.birthday().date();
     if ( birthday.isValid() && mBirthdayConList &&
           birthday.day() == date.day() && birthday.month() == date.month() ) {
       SDEntry entry;
