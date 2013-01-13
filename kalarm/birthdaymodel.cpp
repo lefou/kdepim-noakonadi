@@ -67,18 +67,6 @@ BirthdayModel* BirthdayModel::instance()
     return mInstance;
 }
 
-QVariant BirthdayModel::entityData(const Akonadi::Item& item, int column, int role) const
-{
-    if (columns().at(column) == Birthday  &&  role == Qt::DisplayRole)
-    {
-        QDate date = Akonadi::ContactsTreeModel::entityData(item, column, DateRole).toDate();
-        if (date.isValid())
-            return KGlobal::locale()->formatDate(date, KLocale::ShortDate);
-    }
-    return Akonadi::ContactsTreeModel::entityData(item, column, role);
-}
-
-
 BirthdaySortModel::BirthdaySortModel(QObject* parent)
     : QSortFilterProxyModel(parent)
 {
@@ -119,5 +107,3 @@ bool BirthdaySortModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourc
 
     return true;
 }
-
-// vim: et sw=4:
