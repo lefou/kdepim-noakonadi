@@ -25,9 +25,9 @@
 
 #include <kdebug.h>
 
-using namespace AkonadiFuture;
+using namespace Akonadi;
 
-class AkonadiFuture::AmazingCompleterPrivate
+class Akonadi::AmazingCompleterPrivate
 {
 public:
   AmazingCompleterPrivate(AmazingCompleter *completer) //, QAbstractItemModel *model)

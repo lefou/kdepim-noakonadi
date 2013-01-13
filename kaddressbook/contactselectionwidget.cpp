@@ -164,7 +164,7 @@ KABC::Addressee::List ContactSelectionWidget::collectAddressBookContacts() const
   }
 
   if ( mAddressBookSelectionRecursive->isChecked() ) {
-    AkonadiFuture::RecursiveItemFetchJob *job = new AkonadiFuture::RecursiveItemFetchJob( collection );
+    Akonadi::RecursiveItemFetchJob *job = new Akonadi::RecursiveItemFetchJob( collection );
     job->fetchScope().fetchFullPayload();
 
     if ( job->exec() ) {

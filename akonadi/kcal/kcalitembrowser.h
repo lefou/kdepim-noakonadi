@@ -25,9 +25,7 @@
 
 namespace Akonadi {
 class Item;
-}
 
-namespace AkonadiFuture {
 class AKONADI_KCAL_EXPORT KCalItemBrowser : public ItemBrowser
 {
   public:
@@ -35,7 +33,7 @@ class AKONADI_KCAL_EXPORT KCalItemBrowser : public ItemBrowser
     virtual ~KCalItemBrowser();
 
   protected:
-    virtual QString itemToRichText( const Akonadi::Item &item );
+    virtual QString itemToRichText( const Item &item );
 
   private:
     class Private;

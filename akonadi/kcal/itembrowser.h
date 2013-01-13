@@ -27,9 +27,6 @@
 namespace Akonadi {
 
 class Item;
-}
-
-namespace AkonadiFuture {
 
 /**
  * This class is a base class for item view browsers.
@@ -40,7 +37,7 @@ namespace AkonadiFuture {
  * @see KABCItemBrowser
  * @see KCalItemBrowser
  */
-class AKONADI_KCAL_EXPORT ItemBrowser : public KTextBrowser, public Akonadi::ItemMonitor
+class AKONADI_KCAL_EXPORT ItemBrowser : public KTextBrowser, public ItemMonitor
 {
   Q_OBJECT
 
@@ -65,11 +62,11 @@ class AKONADI_KCAL_EXPORT ItemBrowser : public KTextBrowser, public Akonadi::Ite
      * You should reimplement it and return a richtext representation of
      * the passed item.
      */
-    virtual QString itemToRichText( const Akonadi::Item &item );
+    virtual QString itemToRichText( const Item &item );
 
   private:
-    void itemAdded( const Akonadi::Item &item );
-    void itemChanged( const Akonadi::Item &item );
+    void itemAdded( const Item &item );
+    void itemChanged( const Item &item );
     void itemRemoved();
 
     class Private;

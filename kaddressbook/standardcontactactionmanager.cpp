@@ -35,7 +35,6 @@
 #include <QtGui/QItemSelectionModel>
 
 using namespace Akonadi;
-using namespace AkonadiFuture;
 
 class StandardContactActionManager::Private
 {

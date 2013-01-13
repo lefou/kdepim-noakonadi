@@ -30,7 +30,7 @@
 
 #include <kmime/kmime_header_parsing.h>
 
-namespace AkonadiFuture {
+namespace Akonadi {
 
 class NepomukEMailFeeder : public NepomukFeederAgent<NepomukFast::Mailbox>
 {

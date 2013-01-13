@@ -29,7 +29,7 @@
 class QAbstractItemView;
 
 
-namespace AkonadiFuture
+namespace Akonadi
 {
 
 class AmazingCompleterPrivate;

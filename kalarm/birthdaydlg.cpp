@@ -56,7 +56,6 @@
 #include "kdescendantsproxymodel_p.h"
 
 using namespace KCal;
-using namespace AkonadiFuture;
 
 
 BirthdayDlg::BirthdayDlg(QWidget* parent)

@@ -26,7 +26,6 @@
 #include <QtGui/QColor>
 
 using namespace Akonadi;
-using namespace AkonadiFuture;
 
 /**
  * @internal

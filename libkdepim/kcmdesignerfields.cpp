@@ -351,8 +351,7 @@ void KCMDesignerFields::initGUI()
 
   QLabel *activeLabel = new QLabel(
       i18n( "<a href=\"whatsthis:%1\">How does this work?</a>" , cwHowto), this );
-  
-  activeLabel->setTextInteractionFlags(Qt::TextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::LinksAccessibleByKeyboard) );
+  activeLabel->setTextInteractionFlags(Qt::LinksAccessibleByMouse|Qt::LinksAccessibleByKeyboard);
   connect( activeLabel, SIGNAL(linkActivated(QString)),
            this, SLOT(showWhatsThis(QString)) );
   hbox->addWidget( activeLabel );
