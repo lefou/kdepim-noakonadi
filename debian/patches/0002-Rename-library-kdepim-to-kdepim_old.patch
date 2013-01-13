@@ -1,0 +1,892 @@
+From c31b9119fb08d77ac9a67d68f03f6b7a507e6b1b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali.rohar@gmail.com>
+Date: Mon, 14 Jan 2013 01:36:43 +0100
+Subject: [PATCH 2/3] Rename library kdepim to kdepim_old
+
+* On ubuntu packages depends on one special libkdepim4 version, so install it under another name
+---
+ console/konsolekalendar/CMakeLists.txt             |    2 +-
+ kaddressbook/CMakeLists.txt                        |    6 +++---
+ kaddressbook/common/CMakeLists.txt                 |    2 +-
+ kaddressbook/features/CMakeLists.txt               |    2 +-
+ kaddressbook/kabcdistlistupdater/CMakeLists.txt    |    2 +-
+ kaddressbook/kcmconfigs/CMakeLists.txt             |    4 ++--
+ kaddressbook/views/CMakeLists.txt                  |    2 +-
+ kaddressbook/xxport/CMakeLists.txt                 |    2 +-
+ kalarm/CMakeLists.txt                              |    2 +-
+ kjots/CMakeLists.txt                               |    4 ++--
+ kmail/CMakeLists.txt                               |    4 ++--
+ kmail/tests/CMakeLists.txt                         |    2 +-
+ knode/CMakeLists.txt                               |    4 ++--
+ kontact/plugins/kmail/CMakeLists.txt               |    2 +-
+ kontact/plugins/knotes/CMakeLists.txt              |    2 +-
+ kontact/plugins/korganizer/CMakeLists.txt          |    4 ++--
+ kontact/plugins/summary/CMakeLists.txt             |    2 +-
+ kontact/src/CMakeLists.txt                         |    6 +++---
+ korganizer/CMakeLists.txt                          |   12 ++++++------
+ korganizer/plugins/printing/journal/CMakeLists.txt |    2 +-
+ korganizer/printing/CMakeLists.txt                 |    2 +-
+ kresources/birthdays/CMakeLists.txt                |    2 +-
+ kresources/blog/CMakeLists.txt                     |    4 ++--
+ kresources/groupdav/CMakeLists.txt                 |    4 ++--
+ kresources/groupware/CMakeLists.txt                |    4 ++--
+ kresources/groupwise/CMakeLists.txt                |    4 ++--
+ kresources/groupwise/kioslave/CMakeLists.txt       |    2 +-
+ kresources/groupwise/soap/CMakeLists.txt           |    2 +-
+ kresources/kolab/kabc/CMakeLists.txt               |    2 +-
+ kresources/kolab/kcal/CMakeLists.txt               |    2 +-
+ kresources/kolab/knotes/CMakeLists.txt             |    2 +-
+ kresources/lib/CMakeLists.txt                      |    4 ++--
+ kresources/remote/CMakeLists.txt                   |    4 ++--
+ kresources/slox/CMakeLists.txt                     |    6 +++---
+ libkdepim/CMakeLists.txt                           |   14 +++++++-------
+ libkdepim/tests/CMakeLists.txt                     |   18 +++++++++---------
+ messageviewer/CMakeLists.txt                       |    2 +-
+ plugins/kmail/bodypartformatter/CMakeLists.txt     |    4 ++--
+ wizards/CMakeLists.txt                             |    8 ++++----
+ 39 files changed, 79 insertions(+), 79 deletions(-)
+
+diff --git a/console/konsolekalendar/CMakeLists.txt b/console/konsolekalendar/CMakeLists.txt
+index 8f7f6e0..2ba386c 100644
+--- a/console/konsolekalendar/CMakeLists.txt
++++ b/console/konsolekalendar/CMakeLists.txt
+@@ -22,7 +22,7 @@ kde4_add_app_icon(konsolekalendar_SRCS "${KDE4_ICON_DIR}/oxygen/*/apps/office-ca
+ 
+ kde4_add_executable(konsolekalendar NOGUI ${konsolekalendar_SRCS})
+ 
+-target_link_libraries(konsolekalendar  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim)
++target_link_libraries(konsolekalendar  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old)
+ 
+ install(TARGETS konsolekalendar  ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+diff --git a/kaddressbook/CMakeLists.txt b/kaddressbook/CMakeLists.txt
+index ffe6ed2..e42be47 100644
+--- a/kaddressbook/CMakeLists.txt
++++ b/kaddressbook/CMakeLists.txt
+@@ -76,7 +76,7 @@ kde4_add_app_icon(kaddressbook_bin_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/pics/hi*-ap
+ kde4_add_executable(kaddressbook_bin ${kaddressbook_bin_SRCS})
+ set_target_properties(kaddressbook_bin PROPERTIES OUTPUT_NAME kaddressbook)
+ 
+-target_link_libraries(kaddressbook_bin  kaddressbookprivate ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDE4_KHTML_LIBS} kdepim)
++target_link_libraries(kaddressbook_bin  kaddressbookprivate ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDE4_KHTML_LIBS} kdepim_old)
+ 
+ install(TARGETS kaddressbook_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+ 
+@@ -158,10 +158,10 @@ qt4_add_dbus_interface(kaddressbook_LIB_SRCS org.kde.KAddressbook.Core.xml kaddr
+ 
+ kde4_add_library(kaddressbookprivate SHARED ${kaddressbook_LIB_SRCS})
+ 
+-target_link_libraries(kaddressbookprivate  ${KDEPIMLIBS_SYNDICATION_LIBS} kdepim ${KDEPIMLIBS_KCAL_LIBS} 
++target_link_libraries(kaddressbookprivate  ${KDEPIMLIBS_SYNDICATION_LIBS} kdepim_old ${KDEPIMLIBS_KCAL_LIBS} 
+                               kabc_file_core ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_PHONON_LIBS} 
+                               kabinterfaces kabcommon ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY} kimproxy)
+-target_link_libraries(kaddressbookprivate  LINK_INTERFACE_LIBRARIES ${KDEPIMLIBS_SYNDICATION_LIBS} kdepim ${KDEPIMLIBS_KCAL_LIBS} 
++target_link_libraries(kaddressbookprivate  LINK_INTERFACE_LIBRARIES ${KDEPIMLIBS_SYNDICATION_LIBS} kdepim_old ${KDEPIMLIBS_KCAL_LIBS} 
+                               kabc_file_core ${KDE4_KIO_LIBS} ${KDE4_KUTILS_LIBS}
+                               kabinterfaces kabcommon)
+ 
+diff --git a/kaddressbook/common/CMakeLists.txt b/kaddressbook/common/CMakeLists.txt
+index c99fcdc..cc32c08 100644
+--- a/kaddressbook/common/CMakeLists.txt
++++ b/kaddressbook/common/CMakeLists.txt
+@@ -9,7 +9,7 @@ set(kabcommon_LIB_SRCS
+ 
+ kde4_add_kcfg_files(kabcommon_LIB_SRCS kabprefs_base.kcfgc)
+ kde4_add_library(kabcommon SHARED ${kabcommon_LIB_SRCS})
+-target_link_libraries(kabcommon kdepim ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS})
++target_link_libraries(kabcommon kdepim_old ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS})
+ set_target_properties(kabcommon PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kabcommon ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+diff --git a/kaddressbook/features/CMakeLists.txt b/kaddressbook/features/CMakeLists.txt
+index 4be0306..f1de0b5 100644
+--- a/kaddressbook/features/CMakeLists.txt
++++ b/kaddressbook/features/CMakeLists.txt
+@@ -8,7 +8,7 @@ set(kaddrbk_distributionlistng_PART_SRCS distributionlistngwidget.cpp )
+ 
+ kde4_add_plugin(kaddrbk_distributionlistng ${kaddrbk_distributionlistng_PART_SRCS})
+ 
+-target_link_libraries(kaddrbk_distributionlistng kaddressbookprivate kabinterfaces kabcommon kdepim ${KDEPIMLIBS_KABC_LIBS})
++target_link_libraries(kaddrbk_distributionlistng kaddressbookprivate kabinterfaces kabcommon kdepim_old ${KDEPIMLIBS_KABC_LIBS})
+ 
+ install(TARGETS kaddrbk_distributionlistng  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/kaddressbook/kabcdistlistupdater/CMakeLists.txt b/kaddressbook/kabcdistlistupdater/CMakeLists.txt
+index 7839395..8a9e945 100644
+--- a/kaddressbook/kabcdistlistupdater/CMakeLists.txt
++++ b/kaddressbook/kabcdistlistupdater/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ set(kabcdistlistupdater_SRCS kabcdistlistupdater.cpp)
+ kde4_add_executable(kabcdistlistupdater ${kabcdistlistupdater_SRCS})
+-target_link_libraries(kabcdistlistupdater ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim)
++target_link_libraries(kabcdistlistupdater ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim_old)
+ install(TARGETS kabcdistlistupdater ${INSTALL_TARGETS_DEFAULT_ARGS})
+ install(FILES  kabcdistlistupdater.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
+diff --git a/kaddressbook/kcmconfigs/CMakeLists.txt b/kaddressbook/kcmconfigs/CMakeLists.txt
+index ce57114..7621bad 100644
+--- a/kaddressbook/kcmconfigs/CMakeLists.txt
++++ b/kaddressbook/kcmconfigs/CMakeLists.txt
+@@ -36,7 +36,7 @@ kde4_add_plugin(kcm_kabldapconfig ${kcm_kabldapconfig_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kcm_kabldapconfig kabcommon ${KDE4_KIO_LIBS} kdepim ${KDE4_KDE3SUPPORT_LIBS} ${KDEPIMLIBS_KLDAP_LIBS})
++target_link_libraries(kcm_kabldapconfig kabcommon ${KDE4_KIO_LIBS} kdepim_old ${KDE4_KDE3SUPPORT_LIBS} ${KDEPIMLIBS_KLDAP_LIBS})
+ 
+ install(TARGETS kcm_kabldapconfig  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+@@ -50,7 +50,7 @@ kde4_add_plugin(kcm_kabcustomfields ${kcm_kabcustomfields_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kcm_kabcustomfields kaddressbookprivate kabcommon ${KDE4_KDEUI_LIBS} kdepim)
++target_link_libraries(kcm_kabcustomfields kaddressbookprivate kabcommon ${KDE4_KDEUI_LIBS} kdepim_old)
+ 
+ install(TARGETS kcm_kabcustomfields  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/kaddressbook/views/CMakeLists.txt b/kaddressbook/views/CMakeLists.txt
+index 3f8b8d2..247fc10 100644
+--- a/kaddressbook/views/CMakeLists.txt
++++ b/kaddressbook/views/CMakeLists.txt
+@@ -21,7 +21,7 @@ kde4_add_plugin(kaddrbk_cardview ${kaddrbk_cardview_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kaddrbk_cardview  kaddressbookprivate kabcommon kdepim ${KDEPIMLIBS_KABC_LIBS}  ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(kaddrbk_cardview  kaddressbookprivate kabcommon kdepim_old ${KDEPIMLIBS_KABC_LIBS}  ${QT_QT3SUPPORT_LIBRARY})
+ 
+ install(TARGETS kaddrbk_cardview  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/kaddressbook/xxport/CMakeLists.txt b/kaddressbook/xxport/CMakeLists.txt
+index ff4a5b2..67dd682 100644
+--- a/kaddressbook/xxport/CMakeLists.txt
++++ b/kaddressbook/xxport/CMakeLists.txt
+@@ -30,7 +30,7 @@ kde4_add_plugin(kaddrbk_vcard_xxport ${kaddrbk_vcard_xxport_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kaddrbk_vcard_xxport kaddressbookprivate kabinterfaces kabcommon kdepim ${KDEPIMLIBS_KABC_LIBS} ${KDE4_KDEUI_LIBS} ${QGPGME_LIBRARIES} )
++target_link_libraries(kaddrbk_vcard_xxport kaddressbookprivate kabinterfaces kabcommon kdepim_old ${KDEPIMLIBS_KABC_LIBS} ${KDE4_KDEUI_LIBS} ${QGPGME_LIBRARIES} )
+ 
+ install(TARGETS kaddrbk_vcard_xxport  DESTINATION ${PLUGIN_INSTALL_DIR})
+ endif(QGPGME_FOUND)
+diff --git a/kalarm/CMakeLists.txt b/kalarm/CMakeLists.txt
+index 20129c9..2e306ad 100644
+--- a/kalarm/CMakeLists.txt
++++ b/kalarm/CMakeLists.txt
+@@ -130,7 +130,7 @@ endif (KMAIL_SUPPORTED)
+ 
+ set_target_properties(kalarm_bin PROPERTIES OUTPUT_NAME kalarm)
+ 
+-target_link_libraries(kalarm_bin ${KDE4_KUTILS_LIBS} kalarm_resources kalarm_calendar ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KABC_LIBRARY} ${KDE4_KMIME_LIBRARY} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDEPIMLIBS_MAILTRANSPORT_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} ${KDE4_PHONON_LIBS} ${X11_X11_LIB} kdepim)
++target_link_libraries(kalarm_bin ${KDE4_KUTILS_LIBS} kalarm_resources kalarm_calendar ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KABC_LIBRARY} ${KDE4_KMIME_LIBRARY} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDEPIMLIBS_MAILTRANSPORT_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} ${KDE4_PHONON_LIBS} ${X11_X11_LIB} kdepim_old)
+ 
+ install(TARGETS kalarm_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
+ #endif (UNIX)
+diff --git a/kjots/CMakeLists.txt b/kjots/CMakeLists.txt
+index aec91fd..d9b3a30 100644
+--- a/kjots/CMakeLists.txt
++++ b/kjots/CMakeLists.txt
+@@ -17,7 +17,7 @@ set(kjotsLibs ${KDE4_KIO_LIBS})
+ 
+ if(KJOTS_BUILD_KONTACT_PLUGIN)
+   add_definitions(-DKJOTSKONTACTPLUGIN)
+-  set(kjotsLibs ${kjotsLibs} kdepim)
++  set(kjotsLibs ${kjotsLibs} kdepim_old)
+   
+ endif(KJOTS_BUILD_KONTACT_PLUGIN)
+ 
+@@ -107,7 +107,7 @@ if ( KJOTS_BUILD_KONTACT_PLUGIN  )
+   )
+ 
+ 
+-  target_link_libraries(kjotspart ${KDE4_KUTILS_LIBS} ${KDE4_KPARTS_LIBS} kdepim)
++  target_link_libraries(kjotspart ${KDE4_KUTILS_LIBS} ${KDE4_KPARTS_LIBS} kdepim_old)
+ 
+   install( FILES kjotspart.desktop  DESTINATION ${SERVICES_INSTALL_DIR} )
+   install( FILES kjotspartui.rc  DESTINATION ${DATA_INSTALL_DIR}/kjots)
+diff --git a/kmail/CMakeLists.txt b/kmail/CMakeLists.txt
+index 2dbb08a..407e9f6 100644
+--- a/kmail/CMakeLists.txt
++++ b/kmail/CMakeLists.txt
+@@ -375,7 +375,7 @@ target_link_libraries(kmailprivate
+   mimelib
+   ksieve
+   kpgp
+-  kdepim
++  kdepim_old
+   ${KDE4_KIO_LIBS}
+   ${KDEPIMLIBS_KABC_LIBS}
+   ${KDEPIMLIBS_KPIMUTILS_LIBS}
+@@ -442,7 +442,7 @@ target_link_libraries(kmail
+   ${KDEPIMLIBS_KONTACTINTERFACE_LIBS}
+   kmailprivate
+   mimelib
+-  kdepim
++  kdepim_old
+ )
+ 
+ ########### install files ###############
+diff --git a/kmail/tests/CMakeLists.txt b/kmail/tests/CMakeLists.txt
+index c73fa49..d8aebcb 100644
+--- a/kmail/tests/CMakeLists.txt
++++ b/kmail/tests/CMakeLists.txt
+@@ -61,7 +61,7 @@ set(recipienteditortest_SRCS recipientseditortest.cpp )
+ 
+ kde4_add_executable(recipienteditortest TEST ${recipienteditortest_SRCS})
+ 
+-target_link_libraries(recipienteditortest  ${KDE4_KIO_LIBS} kmailprivate kdepim )
++target_link_libraries(recipienteditortest  ${KDE4_KIO_LIBS} kmailprivate kdepim_old )
+ 
+ 
+ ###### TODO port storagelayer tests to QTestLib
+diff --git a/knode/CMakeLists.txt b/knode/CMakeLists.txt
+index 3fc4762..a4ea706 100644
+--- a/knode/CMakeLists.txt
++++ b/knode/CMakeLists.txt
+@@ -90,7 +90,7 @@ target_link_libraries(knodecommon ${KDE4_KMIME_LIBRARY} ${KDE4_KUTILS_LIBS} ${KD
+                               ${KDE4_KDE3SUPPORT_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDE4_KHTML_LIBS}
+                               ${KDE4_KPIMUTILS_LIBRARY} ${KDE4_MAILTRANSPORT_LIBRARY}
+                               ${KDEPIMLIBS_KONTACTINTERFACE_LIBS}
+-                              kdepim kpgp)
++                              kdepim_old kpgp)
+ 
+ target_link_libraries(knodecommon LINK_INTERFACE_LIBRARIES ${KDE4_KUTILS_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+ 
+@@ -139,7 +139,7 @@ kde4_add_app_icon(knode_SRCS "hi*-app-knode2.png")
+ 
+ kde4_add_executable(knode ${knode_SRCS})
+ 
+-target_link_libraries(knode ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim knodecommon)
++target_link_libraries(knode ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim_old knodecommon)
+ 
+ install(TARGETS knode  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+ 
+diff --git a/kontact/plugins/kmail/CMakeLists.txt b/kontact/plugins/kmail/CMakeLists.txt
+index 1f37d72..4ce70df 100644
+--- a/kontact/plugins/kmail/CMakeLists.txt
++++ b/kontact/plugins/kmail/CMakeLists.txt
+@@ -19,7 +19,7 @@ set(kontact_kmailplugin_PART_SRCS kmail_plugin.cpp summarywidget.cpp ${kontact_k
+ kde4_add_plugin(kontact_kmailplugin ${kontact_kmailplugin_PART_SRCS})
+ add_dependencies(kontact_kmailplugin kmail)
+ 
+-target_link_libraries(kontact_kmailplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim)
++target_link_libraries(kontact_kmailplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old)
+ 
+ ########### next target ###############
+ 
+diff --git a/kontact/plugins/knotes/CMakeLists.txt b/kontact/plugins/knotes/CMakeLists.txt
+index 83f9e64..c36a011 100644
+--- a/kontact/plugins/knotes/CMakeLists.txt
++++ b/kontact/plugins/knotes/CMakeLists.txt
+@@ -12,7 +12,7 @@ qt4_add_dbus_adaptor(kontact_knotesplugin_PART_SRCS org.kde.kontact.KNotes.xml k
+ 
+ kde4_add_plugin(kontact_knotesplugin ${kontact_knotesplugin_PART_SRCS})
+ 
+-target_link_libraries(kontact_knotesplugin ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDE4_KDEPRINT_LIBS} ${KDE4_KPARTS_LIBS} kdepim)
++target_link_libraries(kontact_knotesplugin ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDE4_KDEPRINT_LIBS} ${KDE4_KPARTS_LIBS} kdepim_old)
+ 
+ ########### install files ###############
+ 
+diff --git a/kontact/plugins/korganizer/CMakeLists.txt b/kontact/plugins/korganizer/CMakeLists.txt
+index 9994f10..4a2f591 100644
+--- a/kontact/plugins/korganizer/CMakeLists.txt
++++ b/kontact/plugins/korganizer/CMakeLists.txt
+@@ -10,7 +10,7 @@ qt4_add_dbus_interfaces(kontact_korganizerplugin_PART_SRCS ${CMAKE_SOURCE_DIR}/k
+ 
+ kde4_add_plugin(kontact_korganizerplugin ${kontact_korganizerplugin_PART_SRCS})
+ 
+-target_link_libraries(kontact_korganizerplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} korganizer_calendar kdepim)
++target_link_libraries(kontact_korganizerplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} korganizer_calendar kdepim_old)
+ 
+ ########### next target ###############
+ 
+@@ -20,7 +20,7 @@ qt4_add_dbus_interfaces(kontact_todoplugin_PART_SRCS ${CMAKE_SOURCE_DIR}/korgani
+ 
+ kde4_add_plugin(kontact_todoplugin ${kontact_todoplugin_PART_SRCS})
+ 
+-target_link_libraries(kontact_todoplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} korganizer_calendar kdepim)
++target_link_libraries(kontact_todoplugin ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} korganizer_calendar kdepim_old)
+ 
+ ########### next target ###############
+ 
+diff --git a/kontact/plugins/summary/CMakeLists.txt b/kontact/plugins/summary/CMakeLists.txt
+index dc36102..92419cb 100644
+--- a/kontact/plugins/summary/CMakeLists.txt
++++ b/kontact/plugins/summary/CMakeLists.txt
+@@ -13,7 +13,7 @@ if(KMAIL_SUPPORTED)
+    add_dependencies(kontact_summaryplugin kmail_xml)
+ endif(KMAIL_SUPPORTED)
+ 
+-target_link_libraries(kontact_summaryplugin ${KDE4_KUTILS_LIBS} ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim)
++target_link_libraries(kontact_summaryplugin ${KDE4_KUTILS_LIBS} ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim_old)
+ 
+ ########### next target ###############
+ 
+diff --git a/kontact/src/CMakeLists.txt b/kontact/src/CMakeLists.txt
+index ad98a6c..1a51edf 100644
+--- a/kontact/src/CMakeLists.txt
++++ b/kontact/src/CMakeLists.txt
+@@ -16,7 +16,7 @@ kde4_add_kcfg_files(kontactprivate_LIB_SRCS prefs.kcfgc )
+ 
+ kde4_add_library(kontactprivate SHARED ${kontactprivate_LIB_SRCS})
+ 
+-target_link_libraries(kontactprivate  ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_KHTML_LIBRARY} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim ${KDE4_KDE3SUPPORT_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(kontactprivate  ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDE4_KUTILS_LIBS} ${KDE4_KHTML_LIBRARY} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim_old ${KDE4_KDE3SUPPORT_LIBRARY} ${QT_QT3SUPPORT_LIBRARY})
+ 
+ set_target_properties(kontactprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kontactprivate ${INSTALL_TARGETS_DEFAULT_ARGS} LIBRARY NAMELINK_SKIP)
+@@ -32,7 +32,7 @@ kde4_add_executable(kontact_bin ${kontact_bin_SRCS})
+ 
+ set_target_properties(kontact_bin  PROPERTIES OUTPUT_NAME kontact)
+ 
+-target_link_libraries(kontact_bin  ${KDE4_KHTML_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kontactprivate kdepim ${KDEPIMLIBS_KONTACTINTERFACE_LIBS})
++target_link_libraries(kontact_bin  ${KDE4_KHTML_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kontactprivate kdepim_old ${KDEPIMLIBS_KONTACTINTERFACE_LIBS})
+ 
+ install(TARGETS kontact_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
+ 
+@@ -46,7 +46,7 @@ kde4_add_plugin(kcm_kontact ${kcm_kontact_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kcm_kontact  ${KDE4_KDEUI_LIBS} ${QT_QTGUI_LIBRARY} ${KDE4_KUTILS_LIBS} kdepim kontactprivate ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(kcm_kontact  ${KDE4_KDEUI_LIBS} ${QT_QTGUI_LIBRARY} ${KDE4_KUTILS_LIBS} kdepim_old kontactprivate ${QT_QT3SUPPORT_LIBRARY})
+ 
+ install(TARGETS kcm_kontact  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/korganizer/CMakeLists.txt b/korganizer/CMakeLists.txt
+index 993e4a5..6df2096 100644
+--- a/korganizer/CMakeLists.txt
++++ b/korganizer/CMakeLists.txt
+@@ -81,7 +81,7 @@ endif(NOT KORG_NOPRINTER)
+ 
+   kde4_add_executable(korganizer ${korganizer_SRCS})
+ 
+-  target_link_libraries(korganizer ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBRARY} ${KDE4_KPARTS_LIBRARY} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim korganizerprivate korganizer_core korganizer_calendar korganizer_interfaces)
++  target_link_libraries(korganizer ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBRARY} ${KDE4_KPARTS_LIBRARY} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} kdepim_old korganizerprivate korganizer_core korganizer_calendar korganizer_interfaces)
+ 
+   install(TARGETS korganizer ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+@@ -92,7 +92,7 @@ endif(NOT KORG_NOPRINTER)
+ 
+   kde4_add_plugin(kcm_korganizer ${kcm_korganizer_PART_SRCS})
+ 
+-  target_link_libraries(kcm_korganizer ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDEUI_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} korganizerprivate kdepim korganizer_core korganizer_calendar)
++  target_link_libraries(kcm_korganizer ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDEUI_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KHOLIDAYS_LIBS} korganizerprivate kdepim_old korganizer_core korganizer_calendar)
+ 
+   install(TARGETS kcm_korganizer  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+@@ -121,7 +121,7 @@ endif(NOT KORG_NOPRINTER)
+   kde4_add_library(korganizer_eventviewer SHARED ${korganizer_eventviewer_LIB_SRCS})
+   add_dependencies(korganizer_eventviewer kmail_xml)
+ 
+-  target_link_libraries(korganizer_eventviewer ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim)
++  target_link_libraries(korganizer_eventviewer ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old)
+ 
+   set_target_properties(korganizer_eventviewer PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+   install(TARGETS korganizer_eventviewer ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -133,7 +133,7 @@ endif(NOT KORG_NOPRINTER)
+ 
+   kde4_add_library(korganizer_calendar SHARED ${korganizer_calendar_LIB_SRCS})
+ 
+-  target_link_libraries(korganizer_calendar ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim)
++  target_link_libraries(korganizer_calendar ${KDE4_KPARTS_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim_old)
+ 
+   set_target_properties(korganizer_calendar PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+   install(TARGETS korganizer_calendar ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -147,7 +147,7 @@ endif(NOT KORG_NOPRINTER)
+ 
+   kde4_add_library(korganizer_core SHARED ${korganizer_core_LIB_SRCS})
+ 
+-  target_link_libraries(korganizer_core ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KMIME_LIBRARY} kdepim)
++  target_link_libraries(korganizer_core ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KMIME_LIBRARY} kdepim_old)
+ 
+   set_target_properties(korganizer_core PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+   install(TARGETS korganizer_core ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -256,7 +256,7 @@ endif(NOT KORG_NOPRINTER)
+     ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KPIMIDENTITIES_LIBRARY} ${KDE4_KMIME_LIBRARY}
+     ${KDEPIMLIBS_KHOLIDAYS_LIBS}
+     korganizer_core korganizer_eventviewer korganizer_calendar korganizer_interfaces korg_stdprinting
+-    kdepim
++    kdepim_old
+   )
+ 
+   set_target_properties(korganizerprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+diff --git a/korganizer/plugins/printing/journal/CMakeLists.txt b/korganizer/plugins/printing/journal/CMakeLists.txt
+index d1118c5..ed65deb 100644
+--- a/korganizer/plugins/printing/journal/CMakeLists.txt
++++ b/korganizer/plugins/printing/journal/CMakeLists.txt
+@@ -13,7 +13,7 @@ kde4_add_plugin(korg_journalprint ${korg_journalprint_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(korg_journalprint  ${KDE4_KDEUI_LIBS} korg_stdprinting kdepim)
++target_link_libraries(korg_journalprint  ${KDE4_KDEUI_LIBS} korg_stdprinting kdepim_old)
+ 
+ install(TARGETS korg_journalprint  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/korganizer/printing/CMakeLists.txt b/korganizer/printing/CMakeLists.txt
+index 542cbe8..79c7db2 100644
+--- a/korganizer/printing/CMakeLists.txt
++++ b/korganizer/printing/CMakeLists.txt
+@@ -22,7 +22,7 @@ kde4_add_ui_files(korg_stdprinting_LIB_SRCS
+ 
+ kde4_add_library(korg_stdprinting SHARED ${korg_stdprinting_LIB_SRCS})
+ 
+-target_link_libraries(korg_stdprinting ${KDE4_KUTILS_LIBS} korganizer_core kdepim ${KDEPIMLIBS_KCAL_LIBS} ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(korg_stdprinting ${KDE4_KUTILS_LIBS} korganizer_core kdepim_old ${KDEPIMLIBS_KCAL_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+ 
+ set_target_properties(korg_stdprinting PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ install(TARGETS korg_stdprinting ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/kresources/birthdays/CMakeLists.txt b/kresources/birthdays/CMakeLists.txt
+index 80622ba..851aed5 100644
+--- a/kresources/birthdays/CMakeLists.txt
++++ b/kresources/birthdays/CMakeLists.txt
+@@ -9,7 +9,7 @@ set(kcal_kabc_PART_SRCS resourcekabc.cpp resourcekabcconfig.cpp )
+ 
+ kde4_add_plugin(kcal_kabc ${kcal_kabc_PART_SRCS})
+ 
+-target_link_libraries(kcal_kabc  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdepim kabcommon)
++target_link_libraries(kcal_kabc  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdepim_old kabcommon)
+ 
+ install(TARGETS kcal_kabc  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/kresources/blog/CMakeLists.txt b/kresources/blog/CMakeLists.txt
+index 39b60e0..39d790d 100644
+--- a/kresources/blog/CMakeLists.txt
++++ b/kresources/blog/CMakeLists.txt
+@@ -5,7 +5,7 @@ set(kcal_resourceblog_LIB_SRCS resourceblog.cpp resourceblogconfig.cpp )
+ 
+ kde4_add_library(kcal_resourceblog SHARED ${kcal_resourceblog_LIB_SRCS})
+ 
+-target_link_libraries(kcal_resourceblog ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KBLOG_LIBS} kdepim)
++target_link_libraries(kcal_resourceblog ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KBLOG_LIBS} kdepim_old)
+ 
+ set_target_properties(kcal_resourceblog PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ 
+@@ -23,7 +23,7 @@ target_link_libraries(kcal_blog
+   ${KDEPIMLIBS_KRESOURCES_LIBS}
+   ${QT_QTGUI_LIBRARY}
+   kcal_resourceblog
+-  kdepim
++  kdepim_old
+ )
+ 
+ install(TARGETS kcal_blog  DESTINATION ${PLUGIN_INSTALL_DIR})
+diff --git a/kresources/groupdav/CMakeLists.txt b/kresources/groupdav/CMakeLists.txt
+index c73da16..ed02eed 100644
+--- a/kresources/groupdav/CMakeLists.txt
++++ b/kresources/groupdav/CMakeLists.txt
+@@ -12,7 +12,7 @@ set(kcal_groupdav_LIB_SRCS groupdavcalendaradaptor.cpp kcal_resourcegroupdav.cpp
+ 
+ kde4_add_library(kcal_groupdav SHARED ${kcal_groupdav_LIB_SRCS})
+ 
+-target_link_libraries(kcal_groupdav  ${KDE4_KDECORE_LIBS} kgroupwaredav ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} kdepim)
++target_link_libraries(kcal_groupdav  ${KDE4_KDECORE_LIBS} kgroupwaredav ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} kdepim_old)
+ 
+ set_target_properties(kcal_groupdav PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kcal_groupdav ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -23,7 +23,7 @@ set(kabc_groupdav_LIB_SRCS kabc_resourcegroupdav.cpp groupdavaddressbookadaptor.
+ 
+ kde4_add_library(kabc_groupdav SHARED ${kabc_groupdav_LIB_SRCS})
+ 
+-target_link_libraries(kabc_groupdav  ${KDE4_KDECORE_LIBS} kgroupwaredav ${KDEPIMLIBS_KCAL_LIBS} kdepim ${KDEPIMLIBS_KABC_LIBS})
++target_link_libraries(kabc_groupdav  ${KDE4_KDECORE_LIBS} kgroupwaredav ${KDEPIMLIBS_KCAL_LIBS} kdepim_old ${KDEPIMLIBS_KABC_LIBS})
+ 
+ set_target_properties(kabc_groupdav PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kabc_groupdav ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/kresources/groupware/CMakeLists.txt b/kresources/groupware/CMakeLists.txt
+index 54adf00..965bc4e 100644
+--- a/kresources/groupware/CMakeLists.txt
++++ b/kresources/groupware/CMakeLists.txt
+@@ -6,7 +6,7 @@ kde4_add_kcfg_files(kcal_groupware_LIB_SRCS kcal_groupwareprefsbase.kcfgc)
+ 
+ kde4_add_library(kcal_groupware SHARED ${kcal_groupware_LIB_SRCS})
+ 
+-target_link_libraries(kcal_groupware ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim)
++target_link_libraries(kcal_groupware ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old)
+ 
+ set_target_properties(kcal_groupware PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ 
+@@ -20,7 +20,7 @@ kde4_add_kcfg_files(kabc_groupware_LIB_SRCS kabc_groupwareprefs.kcfgc)
+ 
+ kde4_add_library(kabc_groupware SHARED ${kabc_groupware_LIB_SRCS})
+ 
+-target_link_libraries(kabc_groupware  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim ${KDEPIMLIBS_KABC_LIBS})
++target_link_libraries(kabc_groupware  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old ${KDEPIMLIBS_KABC_LIBS})
+ 
+ set_target_properties(kabc_groupware PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ 
+diff --git a/kresources/groupwise/CMakeLists.txt b/kresources/groupwise/CMakeLists.txt
+index 1895bf2..c62614a 100644
+--- a/kresources/groupwise/CMakeLists.txt
++++ b/kresources/groupwise/CMakeLists.txt
+@@ -18,7 +18,7 @@ kde4_add_kcfg_files(kcal_groupwise_LIB_SRCS kcal_groupwiseprefsbase.kcfgc)
+ 
+ kde4_add_library (kcalgroupwise SHARED ${kcal_groupwise_LIB_SRCS})
+ 
+-target_link_libraries(kcalgroupwise  ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim)
++target_link_libraries(kcalgroupwise  ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim_old)
+ 
+ set_target_properties(kcalgroupwise PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ 
+@@ -44,7 +44,7 @@ kde4_add_kcfg_files(kabc_groupwise_LIB_SRCS kabc_groupwiseprefs.kcfgc)
+ 
+ kde4_add_library(kabcgroupwise SHARED ${kabc_groupwise_LIB_SRCS})
+ 
+-target_link_libraries(kabcgroupwise ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} kdepim ${KDEPIMLIBS_KABC_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
++target_link_libraries(kabcgroupwise ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} kdepim_old ${KDEPIMLIBS_KABC_LIBS} ${KDE4_KDE3SUPPORT_LIBS})
+ 
+ set_target_properties(kabcgroupwise PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+ 
+diff --git a/kresources/groupwise/kioslave/CMakeLists.txt b/kresources/groupwise/kioslave/CMakeLists.txt
+index 7b470a7..3233c73 100644
+--- a/kresources/groupwise/kioslave/CMakeLists.txt
++++ b/kresources/groupwise/kioslave/CMakeLists.txt
+@@ -10,7 +10,7 @@ set(kio_groupwise_PART_SRCS groupwise.cpp )
+ 
+ kde4_add_plugin(kio_groupwise ${kio_groupwise_PART_SRCS})
+ 
+-target_link_libraries(kio_groupwise  ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KCAL_LIBS} gwsoap kdepim)
++target_link_libraries(kio_groupwise  ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KCAL_LIBS} gwsoap kdepim_old)
+ 
+ install(TARGETS kio_groupwise  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/kresources/groupwise/soap/CMakeLists.txt b/kresources/groupwise/soap/CMakeLists.txt
+index 7af6ba4..a337d5a 100644
+--- a/kresources/groupwise/soap/CMakeLists.txt
++++ b/kresources/groupwise/soap/CMakeLists.txt
+@@ -11,7 +11,7 @@ set(soapdebug_SRCS soapdebug.cpp )
+ 
+ kde4_add_executable(soapdebug TEST ${soapdebug_SRCS})
+ 
+-target_link_libraries(soapdebug ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} kdepim)
++target_link_libraries(soapdebug ${KDE4_KDECORE_LIBS} gwsoap ${KDEPIMLIBS_KCAL_LIBS} kdepim_old)
+ 
+ ########### next target ###############
+ 
+diff --git a/kresources/kolab/kabc/CMakeLists.txt b/kresources/kolab/kabc/CMakeLists.txt
+index 0c73da7..941ee73 100644
+--- a/kresources/kolab/kabc/CMakeLists.txt
++++ b/kresources/kolab/kabc/CMakeLists.txt
+@@ -11,7 +11,7 @@ QT4_ADD_DBUS_INTERFACE2( kabckolab_LIB_SRCS ${CMAKE_SOURCE_DIR}/kmail/org.kde.km
+ 
+ kde4_add_library(kabckolab SHARED ${kabckolab_LIB_SRCS})
+ 
+-target_link_libraries(kabckolab  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim kgroupwarebase)
++target_link_libraries(kabckolab  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KABC_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim_old kgroupwarebase)
+ 
+ set_target_properties(kabckolab PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kabckolab ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/kresources/kolab/kcal/CMakeLists.txt b/kresources/kolab/kcal/CMakeLists.txt
+index 63a4222..2ed760b 100644
+--- a/kresources/kolab/kcal/CMakeLists.txt
++++ b/kresources/kolab/kcal/CMakeLists.txt
+@@ -23,7 +23,7 @@ QT4_ADD_DBUS_INTERFACE2( kcalkolab_LIB_SRCS ${CMAKE_SOURCE_DIR}/kmail/org.kde.km
+ 
+ kde4_add_library(kcalkolab SHARED ${kcalkolab_LIB_SRCS})
+ 
+-target_link_libraries(kcalkolab  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDEPIMLIBS_LIBS} kdepim kgroupwarebase)
++target_link_libraries(kcalkolab  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDEPIMLIBS_LIBS} kdepim_old kgroupwarebase)
+ 
+ set_target_properties(kcalkolab PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kcalkolab ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/kresources/kolab/knotes/CMakeLists.txt b/kresources/kolab/knotes/CMakeLists.txt
+index 5567096..aa22fbe 100644
+--- a/kresources/kolab/knotes/CMakeLists.txt
++++ b/kresources/kolab/knotes/CMakeLists.txt
+@@ -13,7 +13,7 @@ QT4_ADD_DBUS_INTERFACE2( knoteskolab_LIB_SRCS ${CMAKE_SOURCE_DIR}/kmail/org.kde.
+ 
+ kde4_add_library(knoteskolab SHARED ${knoteskolab_LIB_SRCS})
+ 
+-target_link_libraries(knoteskolab  ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim kgroupwarebase)
++target_link_libraries(knoteskolab  ${KDEPIMLIBS_KRESOURCES_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KIO_LIBS} ${KDEPIMLIBS_KPIMUTILS_LIBS} kdepim_old kgroupwarebase)
+ 
+ set_target_properties(knoteskolab PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS knoteskolab ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/kresources/lib/CMakeLists.txt b/kresources/lib/CMakeLists.txt
+index dcd37ba..721cd9c 100644
+--- a/kresources/lib/CMakeLists.txt
++++ b/kresources/lib/CMakeLists.txt
+@@ -25,7 +25,7 @@ kde4_add_kcfg_files(kgroupwarebase_LIB_SRCS kresources_groupwareprefs.kcfgc )
+ 
+ kde4_add_library(kgroupwarebase SHARED ${kgroupwarebase_LIB_SRCS})
+ 
+-target_link_libraries(kgroupwarebase  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdepim )
++target_link_libraries(kgroupwarebase  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY} kdepim_old )
+ 
+ set_target_properties(kgroupwarebase PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kgroupwarebase ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -42,7 +42,7 @@ set(kgroupwaredav_LIB_SRCS
+ 
+ kde4_add_library(kgroupwaredav SHARED ${kgroupwaredav_LIB_SRCS})
+ 
+-target_link_libraries(kgroupwaredav  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim kgroupwarebase )
++target_link_libraries(kgroupwaredav  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim_old kgroupwarebase )
+ target_link_libraries(kgroupwaredav  LINK_INTERFACE_LIBRARIES  kgroupwarebase )
+ 
+ set_target_properties(kgroupwaredav
+diff --git a/kresources/remote/CMakeLists.txt b/kresources/remote/CMakeLists.txt
+index 3d70416..cf7253a 100644
+--- a/kresources/remote/CMakeLists.txt
++++ b/kresources/remote/CMakeLists.txt
+@@ -9,7 +9,7 @@ set(kcal_resourceremote_LIB_SRCS resourceremote.cpp resourceremoteconfig.cpp )
+ 
+ kde4_add_library(kcal_resourceremote SHARED ${kcal_resourceremote_LIB_SRCS})
+ 
+-target_link_libraries(kcal_resourceremote  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim )
++target_link_libraries(kcal_resourceremote  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kdepim_old )
+ 
+ set_target_properties(kcal_resourceremote PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kcal_resourceremote ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -30,7 +30,7 @@ target_link_libraries(kcal_remote
+   ${KDEPIMLIBS_KCAL_LIBS}
+   ${KDEPIMLIBS_KRESOURCES_LIBS}
+   kcal_resourceremote
+-  kdepim
++  kdepim_old
+ )
+ 
+ install(TARGETS kcal_remote  DESTINATION ${PLUGIN_INSTALL_DIR})
+diff --git a/kresources/slox/CMakeLists.txt b/kresources/slox/CMakeLists.txt
+index 2a3995e..df801ed 100644
+--- a/kresources/slox/CMakeLists.txt
++++ b/kresources/slox/CMakeLists.txt
+@@ -19,7 +19,7 @@ set(kslox_LIB_SRCS
+ 
+ kde4_add_library(kslox SHARED ${kslox_LIB_SRCS})
+ 
+-target_link_libraries(kslox  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim )
++target_link_libraries(kslox  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} ${KDE4_KDE3SUPPORT_LIBS} kdepim_old )
+ 
+ set_target_properties(kslox PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kslox ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -34,7 +34,7 @@ kde4_add_kcfg_files(kabc_slox_LIB_SRCS kabcsloxprefs.kcfgc )
+ 
+ kde4_add_library(kabc_slox SHARED ${kabc_slox_LIB_SRCS})
+ 
+-target_link_libraries(kabc_slox  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS} kslox kdepim)
++target_link_libraries(kabc_slox  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS} kslox kdepim_old)
+ 
+ set_target_properties(kabc_slox PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kabc_slox ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -49,7 +49,7 @@ kde4_add_kcfg_files(kcal_slox_LIB_SRCS kcalsloxprefs.kcfgc )
+ 
+ kde4_add_library(kcal_slox SHARED ${kcal_slox_LIB_SRCS})
+ 
+-target_link_libraries(kcal_slox  ${KDE4_KDECORE_LIBS} kslox ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} kdepim )
++target_link_libraries(kcal_slox  ${KDE4_KDECORE_LIBS} kslox ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KRESOURCES_LIBS} kdepim_old )
+ 
+ set_target_properties(kcal_slox PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
+ install(TARGETS kcal_slox ${INSTALL_TARGETS_DEFAULT_ARGS})
+diff --git a/libkdepim/CMakeLists.txt b/libkdepim/CMakeLists.txt
+index 8970fa4..b09b558 100644
+--- a/libkdepim/CMakeLists.txt
++++ b/libkdepim/CMakeLists.txt
+@@ -89,9 +89,9 @@ kde4_add_ui_files(kdepim_LIB_SRCS
+   addresspicker.ui
+ )
+ 
+-kde4_add_library(kdepim SHARED ${kdepim_LIB_SRCS})
++kde4_add_library(kdepim_old SHARED ${kdepim_LIB_SRCS})
+ 
+-target_link_libraries(kdepim
++target_link_libraries(kdepim_old
+   ${KDE4_KDE3SUPPORT_LIBS}
+   ${QT_QTDESIGNER_LIBRARY}
+   ${KDEPIMLIBS_KRESOURCES_LIBS}
+@@ -107,7 +107,7 @@ target_link_libraries(kdepim
+   ${KDEPIMLIBS_KMIME_LIBS}
+ )
+ 
+-target_link_libraries(kdepim LINK_INTERFACE_LIBRARIES
++target_link_libraries(kdepim_old LINK_INTERFACE_LIBRARIES
+   ${KDEPIMLIBS_KRESOURCES_LIBS}
+   ${KDEPIMLIBS_KABC_LIBS}
+   ${KDEPIMLIBS_KCAL_LIBS}
+@@ -120,12 +120,12 @@ target_link_libraries(kdepim LINK_INTERFACE_LIBRARIES
+ )
+ 
+ if(MINGW)
+-   target_link_libraries(kdepim oleaut32)
++   target_link_libraries(kdepim_old oleaut32)
+ endif(MINGW)
+ 
+ 
+-set_target_properties(kdepim PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+-install(TARGETS kdepim ${INSTALL_TARGETS_DEFAULT_ARGS})
++set_target_properties(kdepim_old PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
++install(TARGETS kdepim_old ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+ 
+ ########### next target ###############
+@@ -137,7 +137,7 @@ kde4_add_plugin(kdepimwidgets ${kdepimwidgets_PART_SRCS})
+ 
+ 
+ 
+-target_link_libraries(kdepimwidgets  ${KDE4_KIO_LIBS} kdepim)
++target_link_libraries(kdepimwidgets  ${KDE4_KIO_LIBS} kdepim_old)
+ 
+ install(TARGETS kdepimwidgets  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/designer)
+ 
+diff --git a/libkdepim/tests/CMakeLists.txt b/libkdepim/tests/CMakeLists.txt
+index ea9672a..12c8572 100644
+--- a/libkdepim/tests/CMakeLists.txt
++++ b/libkdepim/tests/CMakeLists.txt
+@@ -7,7 +7,7 @@ kde4_add_unit_test(ktimezonecomboboxtest TESTNAME ktimezonecomboboxtest ${ktimez
+ 
+ target_link_libraries(
+   ktimezonecomboboxtest
+-  kdepim
++  kdepim_old
+   ${QT_QTTEST_LIBRARY}
+   ${QT_QTCORE_LIBRARY}
+   ${KDE4_KDECORE_LIBS}
+@@ -24,7 +24,7 @@ kde4_add_kcfg_files(testwizard_SRCS myconfig.kcfgc )
+ 
+ kde4_add_executable(testwizard TEST ${testwizard_SRCS})
+ 
+-target_link_libraries(testwizard  kdepim ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(testwizard  kdepim_old ${KDE4_KDEUI_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+ 
+ 
+ ########### next target ###############
+@@ -35,7 +35,7 @@ set(testaddresseelineedit_SRCS testaddresseelineedit.cpp )
+ 
+ kde4_add_executable(testaddresseelineedit TEST ${testaddresseelineedit_SRCS})
+ 
+-target_link_libraries(testaddresseelineedit  kdepim ${KDE4_KDEUI_LIBS})
++target_link_libraries(testaddresseelineedit  kdepim_old ${KDE4_KDEUI_LIBS})
+ 
+ 
+ ########### next target ###############
+@@ -45,7 +45,7 @@ set(testdateedit_SRCS testdateedit.cpp )
+ 
+ kde4_add_executable(testdateedit TEST ${testdateedit_SRCS})
+ 
+-target_link_libraries(testdateedit  kdepim ${KDE4_KDEUI_LIBS})
++target_link_libraries(testdateedit  kdepim_old ${KDE4_KDEUI_LIBS})
+ 
+ ########### next target ###############
+ 
+@@ -54,7 +54,7 @@ set(testdistrlist_SRCS testdistrlist.cpp )
+ 
+ kde4_add_executable(testdistrlist TEST ${testdistrlist_SRCS})
+ 
+-target_link_libraries(testdistrlist kdepim ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS})
++target_link_libraries(testdistrlist kdepim_old ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KABC_LIBS})
+ 
+ ########### next target ###############
+ 
+@@ -63,7 +63,7 @@ set(testldapclient_SRCS testldapclient.cpp )
+ 
+ kde4_add_executable(testldapclient TEST ${testldapclient_SRCS})
+ 
+-target_link_libraries(testldapclient kdepim ${KDE4_KDEUI_LIBS} ${KDEPIMLIBS_KLDAP_LIBS})
++target_link_libraries(testldapclient kdepim_old ${KDE4_KDEUI_LIBS} ${KDEPIMLIBS_KLDAP_LIBS})
+ 
+ ########### next target ###############
+ 
+@@ -72,7 +72,7 @@ set(testkmeditor_SRCS testkmeditor.cpp )
+ 
+ kde4_add_executable(testkmeditor TEST ${testkmeditor_SRCS})
+ 
+-target_link_libraries(testkmeditor  kdepim ${KDE4_KDEUI_LIBS} )
++target_link_libraries(testkmeditor  kdepim_old ${KDE4_KDEUI_LIBS} )
+ 
+ 
+ 
+@@ -83,7 +83,7 @@ set(testkmeditorwin_SRCS testkmeditorwin.cpp )
+ 
+ kde4_add_executable(testkmeditorwin TEST ${testkmeditorwin_SRCS})
+ 
+-target_link_libraries(testkmeditorwin  kdepim ${KDE4_KDEUI_LIBS} )
++target_link_libraries(testkmeditorwin  kdepim_old ${KDE4_KDEUI_LIBS} )
+ 
+ 
+ ########### next target ###############
+@@ -93,5 +93,5 @@ set(testkincidencechooser_SRCS testkincidencechooser.cpp )
+ 
+ kde4_add_executable(testkincidencechooser TEST ${testkincidencechooser_SRCS})
+ 
+-target_link_libraries(testkincidencechooser  kdepim ${KDE4_KDEUI_LIBS} )
++target_link_libraries(testkincidencechooser  kdepim_old ${KDE4_KDEUI_LIBS} )
+ 
+diff --git a/messageviewer/CMakeLists.txt b/messageviewer/CMakeLists.txt
+index d76f60f..a76bae5 100644
+--- a/messageviewer/CMakeLists.txt
++++ b/messageviewer/CMakeLists.txt
+@@ -54,7 +54,7 @@ kde4_add_ui_files(libmessageviewer_SRCS
+ kde4_add_library(messageviewer SHARED ${libmessageviewer_SRCS})
+ 
+ 
+-target_link_libraries(messageviewer messagecore kdepim kpgp kleo_old
++target_link_libraries(messageviewer messagecore kdepim_old kpgp kleo_old
+  ${KDEPIMLIBS_KMIME_LIBS}
+  ${KDEPIMLIBS_KPIMUTILS_LIBS} ${KDEPIMLIBS_KABC_LIBS}
+  ${KDE4_KDEUI_LIBS} ${KDE4_KHTML_LIBS} ${KDE4_KTNEF_LIBRARY}
+diff --git a/plugins/kmail/bodypartformatter/CMakeLists.txt b/plugins/kmail/bodypartformatter/CMakeLists.txt
+index 2c53eb1..c7c844d 100644
+--- a/plugins/kmail/bodypartformatter/CMakeLists.txt
++++ b/plugins/kmail/bodypartformatter/CMakeLists.txt
+@@ -11,7 +11,7 @@ kde4_add_plugin(kmail_bodypartformatter_text_vcard ${kmail_bodypartformatter_tex
+ 
+ 
+ 
+-target_link_libraries(kmail_bodypartformatter_text_vcard  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KMIME_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim)
++target_link_libraries(kmail_bodypartformatter_text_vcard  ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KMIME_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim_old)
+ 
+ install(TARGETS kmail_bodypartformatter_text_vcard  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+@@ -30,7 +30,7 @@ kde4_add_plugin(kmail_bodypartformatter_text_calendar ${kmail_bodypartformatter_
+ 
+ 
+ 
+-target_link_libraries(kmail_bodypartformatter_text_calendar  ${KDEPIMLIBS_KPIMUTILS_LIBS} ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kmailprivate  kdepim ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY})
++target_link_libraries(kmail_bodypartformatter_text_calendar  ${KDEPIMLIBS_KPIMUTILS_LIBS} ${KDE4_KDECORE_LIBS} ${KDEPIMLIBS_KCAL_LIBS} kmailprivate  kdepim_old ${KDE4_KDE3SUPPORT_LIBS} ${QT_QT3SUPPORT_LIBRARY})
+ 
+ install(TARGETS kmail_bodypartformatter_text_calendar  DESTINATION ${PLUGIN_INSTALL_DIR})
+ 
+diff --git a/wizards/CMakeLists.txt b/wizards/CMakeLists.txt
+index 5bef26a..35b22f5 100644
+--- a/wizards/CMakeLists.txt
++++ b/wizards/CMakeLists.txt
+@@ -27,7 +27,7 @@ if(KDEPIM_BUILD_EVERYTHING)
+   kcal_slox kabc_slox
+   kabckolab knoteskolab
+   kcalkolab kresources
+-  kabc kcal kdepim ${KDEPIMLIBS_KPIMIDENTITIES_LIBS}
++  kabc kcal kdepim_old ${KDEPIMLIBS_KPIMIDENTITIES_LIBS}
+   )
+ 
+   install(TARGETS groupwarewizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
+@@ -44,7 +44,7 @@ if(KDEPIM_BUILD_EVERYTHING)
+ 
+   kde4_add_executable(groupwisewizard ${groupwisewizard_SRCS})
+ 
+-  target_link_libraries(groupwisewizard ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KIDENTITIES_LIBS} kabcgroupwise kcalgroupwise ${KDEPIMLIBS_KCAL_LIBS} kdepim )
++  target_link_libraries(groupwisewizard ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KIDENTITIES_LIBS} kabcgroupwise kcalgroupwise ${KDEPIMLIBS_KCAL_LIBS} kdepim_old )
+ 
+   install(TARGETS groupwisewizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+@@ -60,7 +60,7 @@ if(KDEPIM_BUILD_EVERYTHING)
+ 
+   kde4_add_executable(sloxwizard ${sloxwizard_SRCS})
+ 
+-  target_link_libraries(sloxwizard ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kcal_slox kabc_slox ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim )
++  target_link_libraries(sloxwizard ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kcal_slox kabc_slox ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim_old )
+ 
+   install(TARGETS sloxwizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
+ 
+@@ -90,7 +90,7 @@ target_link_libraries(kolabwizard
+   kabckolab
+   knoteskolab
+   kcalkolab
+-  kdepim
++  kdepim_old
+ )
+ 
+ install(TARGETS kolabwizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
+-- 
+1.7.10.4
+

@@ -9,9 +9,9 @@ usr/lib/kde4/akregator_mk4storage_plugin.so
 usr/lib/kde4/akregatorpart.so
 usr/lib/kde4/kontact_akregatorplugin.so
 usr/lib/libakregatorinterfaces.so.4
-usr/lib/libakregatorinterfaces.so.4.6.0
+usr/lib/libakregatorinterfaces.so.4.*
 usr/lib/libakregatorprivate.so.4
-usr/lib/libakregatorprivate.so.4.6.0
+usr/lib/libakregatorprivate.so.4.*
 usr/share/applications/kde4/akregator.desktop
 usr/share/icons/hicolor/128x128/apps/akregator.png
 usr/share/icons/hicolor/16x16/apps/akregator.png

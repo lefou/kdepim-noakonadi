@@ -14,7 +14,7 @@ usr/lib/kde4/kmail_bodypartformatter_text_xdiff.so
 usr/lib/kde4/kmailpart.so
 usr/lib/kde4/kontact_kmailplugin.so
 usr/lib/libkmailprivate.so.4
-usr/lib/libkmailprivate.so.4.6.0
+usr/lib/libkmailprivate.so.4.*
 #usr/share/akonadi/agents/nepomukemailfeeder.desktop
 usr/share/applications/kde4/KMail.desktop
 usr/share/applications/kde4/kmail_view.desktop

@@ -3,7 +3,7 @@ usr/lib/kde4/kcm_knode.so
 usr/lib/kde4/knodepart.so
 usr/lib/kde4/kontact_knodeplugin.so
 usr/lib/libknodecommon.so.4
-usr/lib/libknodecommon.so.4.6.0
+usr/lib/libknodecommon.so.4.*
 usr/share/applications/kde4/KNode.desktop
 usr/share/icons/hicolor/128x128/apps/knode.png
 usr/share/icons/hicolor/128x128/apps/knode2.png

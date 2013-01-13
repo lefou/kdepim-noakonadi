@@ -4,9 +4,9 @@ usr/lib/kde4/kalarm_local.so
 usr/lib/kde4/kalarm_localdir.so
 usr/lib/kde4/kalarm_remote.so
 usr/lib/libkalarm_calendar.so.4
-usr/lib/libkalarm_calendar.so.4.6.0
+usr/lib/libkalarm_calendar.so.4.*
 usr/lib/libkalarm_resources.so.4
-usr/lib/libkalarm_resources.so.4.6.0
+usr/lib/libkalarm_resources.so.4.*
 usr/share/applications/kde4/kalarm.desktop
 usr/share/autostart/kalarm.autostart.desktop
 usr/share/icons/hicolor/16x16/apps/kalarm.png

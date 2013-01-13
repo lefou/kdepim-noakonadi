@@ -1,5 +1,5 @@
 usr/lib/libkpgp.so.4
-usr/lib/libkpgp.so.4.6.0
+usr/lib/libkpgp.so.4.*
 usr/share/kde4/apps/kconf_update/kpgp-3.1-upgrade-address-data.pl
 usr/share/kde4/apps/kconf_update/kpgp.upd
 usr/share/kde4/apps/kmail/pics/key.png

@@ -25,9 +25,9 @@ usr/lib/kde4/kontact_kaddressbookplugin.so
 usr/lib/kde4/ktexteditorkabcbridge.so
 usr/lib/kde4/ldifvcardthumbnail.so
 usr/lib/libkabinterfaces.so.4
-usr/lib/libkabinterfaces.so.4.3.0
+usr/lib/libkabinterfaces.so.4.*
 usr/lib/libkaddressbookprivate.so.4
-usr/lib/libkaddressbookprivate.so.4.3.0
+usr/lib/libkaddressbookprivate.so.4.*
 usr/share/applications/kde4/kaddressbook.desktop
 usr/share/autostart/kabcdistlistupdater.desktop
 usr/share/icons/hicolor/128x128/apps/kaddressbook.png
@@ -106,4 +106,3 @@ usr/share/kde4/servicetypes/kaddressbook_contacteditorwidget.desktop
 usr/share/kde4/servicetypes/kaddressbook_extension.desktop
 usr/share/kde4/servicetypes/kaddressbook_view.desktop
 usr/share/kde4/servicetypes/kaddressbook_xxport.desktop
-usr/share/kde4/servicetypes/kaddressbookimprotocol.desktop

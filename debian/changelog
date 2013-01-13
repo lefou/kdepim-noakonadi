@@ -1,3 +1,19 @@
+kdepim (5:4.4.11.2-0ubuntu1) unstable; urgency=low
+
+  * Use patches from branch KDE/4.4
+  * Remove akonadi from kdepim
+  * Revert kaddressbook from branch KDE/4.3 which is without akonadi
+  * Compile without nepomuk
+  * Add suffix old to libkleo and libkdepim libraries to avoid name problems
+  * Do not compile parts which depends on akonadi:
+      akonadi, akonadiconsole, editorpage kaddressbook plugin
+      ContactsTreeModel and ContactsFilterModel classes in libkdepim
+      Pane and StorageModel classes in messagelist
+  * Do not compile parts which does not depends on akonadi in upstream kdepim:
+      kleopatra, akregator, blogilo, knotes, ktimetracker, ontologies, kdgantt
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 13 Jan 2013 16:52:11 +0100
+
 kdepim (4:4.4.11.1-0ubuntu1) UNRELEASED; urgency=low
 
   * Merge from debian, remaining changes
