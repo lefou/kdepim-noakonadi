@@ -138,7 +138,7 @@ void DistributionListDialog::setRecipients( const Recipient::List &recipients )
 {
   Recipient::List::ConstIterator it;
   for( it = recipients.constBegin(); it != recipients.constEnd(); ++it ) {
-    const QStringList emails = KPIMUtils::splitAddressList( (*it).email() );
+    QStringList emails = KPIMUtils::splitAddressList( (*it).email() );
     QStringList::ConstIterator it2;
     for( it2 = emails.constBegin(); it2 != emails.constEnd(); ++it2 ) {
       QString name;
@@ -191,8 +191,7 @@ void DistributionListDialog::slotUser1()
 {
   bool isEmpty = true;
 
-  const int numberOfItems = mRecipientsList->topLevelItemCount();
-  for (int i = 0; i < numberOfItems; ++i) {
+  for (int i = 0; i < mRecipientsList->topLevelItemCount(); ++i) {
     DistributionListItem *item = static_cast<DistributionListItem *>(
         mRecipientsList->topLevelItem( i ));
     if ( item && item->checkState( 0 ) == Qt::Checked ) {
@@ -241,8 +240,7 @@ void DistributionListDialog::slotUser1()
 
   KABC::ContactGroup group( name );
 
-  const int numberOfTopLevelItems = mRecipientsList->topLevelItemCount();
-  for ( int i = 0; i < numberOfTopLevelItems; ++i ) {
+  for ( int i = 0; i < mRecipientsList->topLevelItemCount(); ++i ) {
     DistributionListItem *item = static_cast<DistributionListItem *>( mRecipientsList->topLevelItem( i ) );
     if ( item && item->checkState( 0 ) == Qt::Checked ) {
       kDebug() << item->addressee().fullEmail() << item->addressee().uid();
