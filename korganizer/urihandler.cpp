@@ -27,6 +27,7 @@
 #include <knodeinterface.h>
 #include <kmailinterface.h>
 #include <korganizerinterface.h>
+#include <coreinterface.h>
 
 #include <libkdepim/kdepimprotocols.h>
 
@@ -63,12 +64,10 @@ bool UriHandler::process( const QString &uri )
   } else if ( uri.startsWith( KDEPIMPROTOCOL_CONTACT ) ) {
     if ( QDBusConnection::sessionBus().interface()->isServiceRegistered(
            "org.kde.kaddressbook" ) ) {
-/*FIXME: use external contact viewer
       kapp->updateRemoteUserTimestamp( "org.kde.kaddressbook" );
       org::kde::KAddressbook::Core kaddressbook(
         "org.kde.kaddressbook", "/KAddressBook", QDBusConnection::sessionBus() );
       kaddressbook.showContactEditor( uri.mid( ::qstrlen( KDEPIMPROTOCOL_CONTACT ) ) );
-*/
       return true;
     } else {
       /*
