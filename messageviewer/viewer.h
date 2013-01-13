@@ -38,9 +38,6 @@
 
 #include <kmime/kmime_message.h>
 
-//Akonadi includes
-#include <akonadi/item.h>
-
 class QSplitter;
 class KHBox;
 class QTreeWidgetItem;
@@ -124,13 +121,6 @@ class MESSAGEVIEWER_EXPORT Viewer: public QWidget {
   */
   void setMessage(KMime::Message* message, UpdateMode updateMode = Delayed, Ownership ownership = Keep);
 
-  /** Set the Akonadi item that will be displayed.
-  * @param item - the Akonadi item to be displayed. If it doesn't hold a mail (KMime::Message::Ptr as payload data),
-  *               an empty page is shown.
-  * @param updateMode - update the display immediately or not. See UpdateMode.
-  */
-  void setMessageItem(const Akonadi::Item& item, UpdateMode updateMode = Delayed );
-
   /** Instead of settings a message to be shown sets a message part
       to be shown */
   void setMessagePart( KMime::Content* aMsgPart, bool aHTML,
@@ -148,7 +138,6 @@ class MESSAGEVIEWER_EXPORT Viewer: public QWidget {
   *   @param message the message to display and print
   */
   void printMessage( KMime::Message* message );
-  void printMessage( const Akonadi::Item &msg );
 
   /** Print the currently displayed message */
   void print();
@@ -268,8 +257,6 @@ signals:
 
   /** The user presses the right mouse button. 'url' may be 0. */
   void popupMenu(KMime::Message &msg, const KUrl &url, const QPoint& mousePos);
-  /** The user presses the right mouse button. 'url' may be 0. */
-  void popupMenu(const Akonadi::Item &msg, const KUrl &url, const QPoint& mousePos);
 
 
   /** The user has clicked onto an URL that is no attachment. */

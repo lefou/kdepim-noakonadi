@@ -60,8 +60,6 @@ using MessageViewer::TeeHtmlWriter;
 #include <KABC/Addressee>
 #include <KABC/VCardConverter>
 
-#include <Akonadi/ItemModifyJob>
-
 #include <kpimutils/kfileio.h>
 
 #include <dom/html_element.h>
@@ -307,10 +305,6 @@ bool ViewerPrivate::deleteAttachment(KMime::Content * node, bool showWarning)
   mMimePartModel->setRoot( 0 ); //don't confuse the model
   parent->removeContent( node, true );
   mMimePartModel->setRoot( mMessage );
-
-  mMessageItem.setPayloadFromData( mMessage->encodedContent() );
-  Akonadi::ItemModifyJob *job = new Akonadi::ItemModifyJob( mMessageItem );
-//TODO(Andras) error checking?   connect( job, SIGNAL(result(KJob*)), SLOT(imapItemUpdateResult(KJob*)) );
 
   return true;
 }
@@ -1476,13 +1470,6 @@ void ViewerPrivate::setPrintFont( const QFont& font )
 }
 
 
-void ViewerPrivate::printMessage( const Akonadi::Item &message )
-{
-  disconnect( mPartHtmlWriter, SIGNAL( finished() ), this, SLOT( slotPrintMsg() ) );
-  connect( mPartHtmlWriter, SIGNAL( finished() ), this, SLOT( slotPrintMsg() ) );
-  setMessageItem( message, Viewer::Force );
-}
-
 void ViewerPrivate::printMessage( KMime::Message* message )
 {
   disconnect( mPartHtmlWriter, SIGNAL( finished() ), this, SLOT( slotPrintMsg() ) );
@@ -1490,47 +1477,6 @@ void ViewerPrivate::printMessage( KMime::Message* message )
   setMessage( message, Viewer::Force );
 }
 
-
-void ViewerPrivate::setMessageItem( const Akonadi::Item &item,  Viewer::UpdateMode updateMode )
-{
-  if ( mMessage && !mNodeHelper->nodeProcessed( mMessage ) ) {
-    kWarning() << "The root node is not yet processed! Danger!";
-    return;
-  }
-
-  if ( mMessage && mNodeHelper->nodeBeingProcessed( mMessage ) ) {
-    kWarning() << "The root node is not yet fully processed! Danger!";
-    return;
-  }
-
-    if ( mDeleteMessage ) {
-      kDebug() << "DELETE " << mMessage;
-      delete mMessage;
-      mMessage = 0;
-    }
-    mNodeHelper->clear();
-    mMimePartModel->setRoot( 0 );
-
-    mMessage = 0; //forget the old message if it was set
-    mMessageItem = item;
-
-    if ( !mMessageItem.hasPayload<KMime::Message::Ptr>() ) {
-      kWarning() << "Payload is not a MessagePtr!";
-      return;
-    }
-    //Note: if I use MessagePtr for mMessage all over, I get a crash in the destructor
-    mMessage = new KMime::Message;
-    kDebug() << "START SHOWING" << mMessage;
-
-    mMessage ->setContent( mMessageItem.payloadData() );
-    mMessage ->parse();
-    mDeleteMessage = true;
-
-
-    update( updateMode );
-    kDebug() << "SHOWN" << mMessage;
-
-}
 
 void ViewerPrivate::setMessage(KMime::Message* aMsg, Viewer::UpdateMode updateMode, Viewer::Ownership ownerShip)
 {
@@ -2255,10 +2201,6 @@ void ViewerPrivate::slotUrlPopup(const QString &aUrl, const QPoint& aPos)
     kWarning() << "Unhandled URL right-click!";
     emit popupMenu( *mMessage, url, aPos );
   }
-  if ( mMessageItem.isValid() ) {
-    kWarning() << "Unhandled URL right-click!";
-    emit popupMenu( mMessageItem, url, aPos );
-  }
 }
 
 void ViewerPrivate::slotFind()
@@ -2740,9 +2682,6 @@ void ViewerPrivate::slotAttachmentEditDone( MessageViewer::EditorWatcher* editor
       KMime::Content *node = mEditorWatchers[editorWatcher];
       node->setBody( data );
       file.close();
-
-      mMessageItem.setPayloadFromData( mMessage->encodedContent() );
-      Akonadi::ItemModifyJob *job = new Akonadi::ItemModifyJob( mMessageItem );
     }
   }
   mEditorWatchers.remove( editorWatcher );

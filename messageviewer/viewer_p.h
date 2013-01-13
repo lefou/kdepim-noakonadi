@@ -27,8 +27,6 @@
 #include <KSharedConfigPtr>
 #include <KUrl>
 
-#include <akonadi/item.h>
-
 #include <kmime/kmime_message.h>
 
 #include <dom/dom_node.h>
@@ -120,8 +118,6 @@ public:
   void emitPopupMenu( const KUrl & url, const QPoint & p ) {
     if ( mMessage )
       emit popupMenu( *mMessage, url, p );
-    if ( mMessageItem.isValid() )
-      emit popupMenu( mMessageItem, url, p );
   }
 
   /** Access to the KHTMLPart used for the viewer. Use with
@@ -259,14 +255,6 @@ public:
 
   /** Print message. */
   void printMessage( KMime::Message* message );
-  void printMessage( const Akonadi::Item &msg );
-
-    /** Set the Akonadi item that will be displayed.
-  * @param item - the Akonadi item to be displayed. If it doesn't hold a mail (KMime::Message::Ptr as payload data),
-  *               an empty page is shown.
-  * @param updateMode - update the display immediately or not. See MailViewer::UpdateMode.
-  */
-  void setMessageItem(const Akonadi::Item& item, Viewer::UpdateMode updateMode = Viewer::Delayed );
 
 
   /** Set the message that shall be shown.
@@ -458,7 +446,6 @@ public slots:
 signals:
   void replaceMsgByUnencryptedVersion();
   void popupMenu(KMime::Message &msg, const KUrl &url, const QPoint& mousePos);
-  void popupMenu(const Akonadi::Item &msg, const KUrl &url, const QPoint& mousePos);
   void urlClicked(const KUrl &url, int button);
   void noDrag();
 
@@ -466,7 +453,6 @@ public:
   NodeHelper* mNodeHelper;
   bool mHtmlMail, mHtmlLoadExternal, mHtmlOverride, mHtmlLoadExtOverride;
   KMime::Message *mMessage; //the current message, if it was set manually
-  Akonadi::Item mMessageItem; //the message item from Akonadi
   bool mDeleteMessage; //the message was created in the lib, eg. by calling setMessageItem()
   // widgets:
   QSplitter * mSplitter;
