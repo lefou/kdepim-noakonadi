@@ -41,14 +41,13 @@ GlobalContactModel::GlobalContactModel()
   scope.fetchAttribute<Akonadi::EntityDisplayAttribute>();
 
   mMonitor = new Akonadi::ChangeRecorder;
-  mMonitor->setSession(mSession);
   mMonitor->fetchCollection( true );
   mMonitor->setItemFetchScope( scope );
   mMonitor->setCollectionMonitored( Akonadi::Collection::root() );
   mMonitor->setMimeTypeMonitored( KABC::Addressee::mimeType(), true );
   mMonitor->setMimeTypeMonitored( KABC::ContactGroup::mimeType(), true );
 
-  mModel = new Akonadi::ContactsTreeModel( mMonitor );
+  mModel = new Akonadi::ContactsTreeModel( mSession, mMonitor );
 }
 
 GlobalContactModel::~GlobalContactModel()

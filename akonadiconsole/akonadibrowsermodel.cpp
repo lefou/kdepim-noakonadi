@@ -200,8 +200,8 @@ public:
   }
 };
 
-AkonadiBrowserModel::AkonadiBrowserModel( ChangeRecorder* monitor, QObject* parent )
-    : EntityTreeModel( monitor, parent ),
+AkonadiBrowserModel::AkonadiBrowserModel( Session* session, ChangeRecorder* monitor, QObject* parent )
+    : EntityTreeModel( session, monitor, parent ),
       m_itemDisplayMode( GenericMode )
 {
 
