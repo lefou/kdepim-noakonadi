@@ -110,8 +110,9 @@ else(KDEPIM_ONLY_KLEO)
 #  macro_log_feature(Soprano_FOUND "Soprano" "Semantic Desktop Storing" "http://soprano.sourceforge.net" TRUE "${SOPRANO_MIN_VERSION}" "Soprano is needed for Nepomuk")
   set(Soprano_FOUND 0)
 
-  find_package(Nepomuk)
-  macro_log_feature(Nepomuk_FOUND "Nepomuk" "The Nepomuk libraries" "http://www.kde.org" TRUE "" "Nepomuk extends the search and tagging functionalities in KMail and Akonadi")
+#  find_package(Nepomuk)
+#  macro_log_feature(Nepomuk_FOUND "Nepomuk" "The Nepomuk libraries" "http://www.kde.org" TRUE "" "Nepomuk extends the search and tagging functionalities in KMail and Akonadi")
+  set(Nepomuk_FOUND 0)
 
 
 ############### Needed commands before building anything ###############
