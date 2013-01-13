@@ -116,6 +116,18 @@ Description: RSS/Atom feed aggregator
  .
  This package is part of the KDE PIM module.
 
+Package: libkabcommon4
+Section: libs
+Architecture: any
+Depends: ${shlibs:Depends}
+Replaces: kaddressbook (<< 4:4.2.85)
+Description: KDE PIM common addressbook library
+ This package contains common address book library used by other
+ KDE PIM components.
+ .
+ This package is part of KDE, and a component of the KDE PIM module.
+ See the 'kde' and 'kdepim' packages for more information.
+
 Package: kaddressbook
 Section: utils
 Architecture: any

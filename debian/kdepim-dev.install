@@ -72,6 +72,8 @@ usr/lib/libkabc_groupdav.so
 usr/lib/libkabc_slox.so
 usr/lib/libkabcgroupwise.so
 usr/lib/libkabckolab.so
+usr/lib/libkabcommon.so
+usr/lib/libkabinterfaces.so
 usr/lib/libkalarm_calendar.so
 usr/lib/libkalarm_resources.so
 usr/lib/libkcal_groupdav.so
@@ -114,3 +116,4 @@ usr/share/dbus-1/interfaces/org.kde.korganizer.KOrgac.xml
 usr/share/dbus-1/interfaces/org.kde.korganizer.Korganizer.xml
 usr/share/dbus-1/interfaces/org.kde.ktimetracker.ktimetracker.xml
 usr/share/dbus-1/interfaces/org.kde.mailtransport.service.xml
+usr/include/kaddressbook/kaddressbook_export.h
