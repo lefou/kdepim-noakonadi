@@ -1,5 +1,5 @@
 /*
-    This file is part of Akonadi Contact.
+    This file is part of KAddressBook.
 
     Copyright (c) 2009 Stephen Kelly <steveire@gmail.com>
     Copyright (c) 2009 Tobias Koenig <tokoe@kde.org>
@@ -29,37 +29,25 @@
 
 using namespace Akonadi;
 
-class ContactsTreeModel::Private
-{
-  public:
-    Private()
-      : mColumns( ContactsTreeModel::Columns() << ContactsTreeModel::FullName )
-    {
-    }
-
-    Columns mColumns;
-};
-
 ContactsTreeModel::ContactsTreeModel( Session *session, ChangeRecorder *monitor, QObject *parent )
-  : EntityTreeModel( session, monitor, parent ), d( new Private )
+  : EntityTreeModel( session, monitor, parent ), mColumns( Columns() << FullName )
 {
 }
 
 ContactsTreeModel::~ContactsTreeModel()
 {
-  delete d;
 }
 
 void ContactsTreeModel::setColumns( const Columns &columns )
 {
   emit layoutAboutToBeChanged();
-  d->mColumns = columns;
+  mColumns = columns;
   emit layoutChanged();
 }
 
 ContactsTreeModel::Columns ContactsTreeModel::columns() const
 {
-  return d->mColumns;
+  return mColumns;
 }
 
 QVariant ContactsTreeModel::entityData( const Item &item, int column, int role ) const
@@ -87,7 +75,7 @@ QVariant ContactsTreeModel::entityData( const Item &item, int column, int role )
       }
       return QVariant();
     } else if ( (role == Qt::DisplayRole) || (role == Qt::EditRole) ) {
-      switch ( d->mColumns.at( column ) ) {
+      switch ( mColumns.at( column ) ) {
         case FullName:
           return contact.realName();
           break;
@@ -153,7 +141,7 @@ QVariant ContactsTreeModel::entityData( const Item &item, int column, int role )
       else
         return QVariant();
     } else if ( (role == Qt::DisplayRole) || (role == Qt::EditRole) ) {
-      switch ( d->mColumns.at( column ) ) {
+      switch ( mColumns.at( column ) ) {
         case FullName:
           {
             const KABC::ContactGroup group = item.payload<KABC::ContactGroup>();
@@ -161,7 +149,6 @@ QVariant ContactsTreeModel::entityData( const Item &item, int column, int role )
           }
           break;
         default:
-            return QVariant();
           break;
       }
     }
@@ -189,7 +176,7 @@ int ContactsTreeModel::entityColumnCount( HeaderGroup headerGroup ) const
   if ( headerGroup == EntityTreeModel::CollectionTreeHeaders ) {
     return 1;
   } else if ( headerGroup == EntityTreeModel::ItemListHeaders ) {
-    return d->mColumns.count();
+    return mColumns.count();
   } else {
     return EntityTreeModel::entityColumnCount( headerGroup );
   }
@@ -210,10 +197,10 @@ QVariant ContactsTreeModel::entityHeaderData( int section, Qt::Orientation orien
             break;
         }
       } else if ( headerGroup == EntityTreeModel::ItemListHeaders ) {
-        if ( section < 0 || section >= d->mColumns.count() )
+        if ( section < 0 || section >= mColumns.count() )
           return QVariant();
 
-        switch ( d->mColumns.at( section ) ) {
+        switch ( mColumns.at( section ) ) {
           case FullName:
             return i18nc( "@title:column, name of a person", "Name" );
             break;
