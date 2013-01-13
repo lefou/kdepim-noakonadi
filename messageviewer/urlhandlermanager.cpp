@@ -43,6 +43,7 @@
 #include "stringutil.h"
 #include "stl_util.h"
 #include <kurl.h>
+#include <kdebug.h>
 
 #include <kmime/kmime_content.h>
 
