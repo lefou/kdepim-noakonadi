@@ -136,11 +136,6 @@ QVariant ContactsTreeModel::entityData( const Item &item, int column, int role )
           return contact.note();
           break;
       }
-    } else if ( role == DateRole ) {
-      if ( d->mColumns.at( column ) == Birthday )
-        return contact.birthday();
-      else
-        return QDate();
     }
   } else if ( item.mimeType() == KABC::ContactGroup::mimeType() ) {
     if ( !item.hasPayload<KABC::ContactGroup>() ) {
