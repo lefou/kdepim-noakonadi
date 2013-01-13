@@ -33,9 +33,9 @@
 #include <kdgantt1/KDGanttViewSubwidgets.h>
 #include <kdgantt1/KDGanttViewTaskItem.h>
 
-#include <akonadi/contact/contactgroupexpandjob.h>
-#include <akonadi/contact/contactgroupsearchjob.h>
+#include <libkdepim/distributionlist.h>
 
+#include <KABC/StdAddressBook>
 #include <KCal/FreeBusy>
 #include <KPIMUtils/Email>
 
@@ -785,20 +785,17 @@ void KOEditorFreeBusy::fillIncidence( Incidence *incidence )
     Q_ASSERT( attendee );
     /* Check if the attendee is a distribution list and expand it */
     if ( attendee->email().isEmpty() ) {
-      Akonadi::ContactGroupSearchJob *job = new Akonadi::ContactGroupSearchJob();
-      job->setQuery( Akonadi::ContactGroupSearchJob::Name, attendee->name() );
-      job->exec();
-
-      const KABC::ContactGroup::List groups = job->contactGroups();
-      if ( !groups.isEmpty() ) {
+      KPIM::DistributionList list =
+        KPIM::DistributionList::findByName( KABC::StdAddressBook::self(), attendee->name() );
+      if ( !list.isEmpty() ) {
         toBeDeleted.push_back( item ); // remove it once we are done expanding
-        Akonadi::ContactGroupExpandJob *expandJob = new Akonadi::ContactGroupExpandJob( groups.first() );
-        expandJob->exec();
-
-        const KABC::Addressee::List contacts = expandJob->contacts();
-        foreach ( const KABC::Addressee &contact, contacts ) {
+        KPIM::DistributionList::Entry::List entries = list.entries( KABC::StdAddressBook::self() );
+        KPIM::DistributionList::Entry::List::Iterator it( entries.begin() );
+        while ( it != entries.end() ) {
+          KPIM::DistributionList::Entry &e = ( *it );
+          ++it;
           // this calls insertAttendee, which appends
-          insertAttendeeFromAddressee( contact, attendee );
+          insertAttendeeFromAddressee( e.addressee, attendee );
           // TODO: duplicate check, in case it was already added manually
         }
       }

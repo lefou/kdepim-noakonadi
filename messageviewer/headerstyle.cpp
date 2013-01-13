@@ -44,11 +44,12 @@ using KPIMUtils::LinkLocator;
 #include "libkdepim/kxface.h"
 using namespace KPIM;
 
-#include <akonadi/contact/contactsearchjob.h>
 #include <kdebug.h>
 #include <kconfiggroup.h>
 #include <klocale.h>
 #include <kglobal.h>
+#include <kabc/stdaddressbook.h>
+#include <kabc/addresseelist.h>
 #include <kcodecs.h>
 #include <KColorScheme>
 
@@ -490,12 +491,8 @@ QString FancyHeaderStyle::format( KMime::Message * message,
 
   QString userHTML;
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  job->setQuery( Akonadi::ContactSearchJob::Email, KPIMUtils::firstEmailAddress( message->from()->asUnicodeString() ) );
-  if ( !job->exec() )
-    return QString();
-
-  const KABC::Addressee::List addresses = job->contacts();
+  KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+  KABC::Addressee::List addresses = addressBook->findByEmail( KPIMUtils::firstEmailAddress( message->from()->asUnicodeString() ) );
 
   QString photoURL;
   int photoWidth = 60;
