@@ -75,8 +75,8 @@ set(kdepim_LIB_SRCS
    colorlistbox.cpp
    uistatesaver.cpp
    distributionlistconverter.cpp
-   contactsfilterproxymodel.cpp
-   contactstreemodel.cpp
+#   contactsfilterproxymodel.cpp
+#   contactstreemodel.cpp
 )
 
 QT4_ADD_DBUS_INTERFACE(kdepim_LIB_SRCS ${CMAKE_SOURCE_DIR}/kaddressbook/org.kde.KAddressbook.Core.xml kaddressbookcore_interface )
