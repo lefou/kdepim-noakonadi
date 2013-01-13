@@ -102,11 +102,13 @@ else(KDEPIM_ONLY_KLEO)
   set(SDO_MIN_VERSION 0.2)
   set(SOPRANO_MIN_VERSION 2.3.70)
 
-  find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
-  macro_log_feature(SHAREDDESKTOPONTOLOGIES_FOUND "Shared desktop ontologies" "Desktop ontologies" "http://oscaf.sourceforge.net" TRUE "${SDO_MIN_VERSION}" "Ontologies necessary for the Nepomuk semantic desktop.")
+#  find_package(SharedDesktopOntologies ${SDO_MIN_VERSION})
+#  macro_log_feature(SHAREDDESKTOPONTOLOGIES_FOUND "Shared desktop ontologies" "Desktop ontologies" "http://oscaf.sourceforge.net" TRUE "${SDO_MIN_VERSION}" "Ontologies necessary for the Nepomuk semantic desktop.")
+  set(SHAREDDESKTOPONTOLOGIES_FOUND 0)
 
-  find_package(Soprano)
-  macro_log_feature(Soprano_FOUND "Soprano" "Semantic Desktop Storing" "http://soprano.sourceforge.net" TRUE "${SOPRANO_MIN_VERSION}" "Soprano is needed for Nepomuk")
+#  find_package(Soprano)
+#  macro_log_feature(Soprano_FOUND "Soprano" "Semantic Desktop Storing" "http://soprano.sourceforge.net" TRUE "${SOPRANO_MIN_VERSION}" "Soprano is needed for Nepomuk")
+  set(Soprano_FOUND 0)
 
   find_package(Nepomuk)
   macro_log_feature(Nepomuk_FOUND "Nepomuk" "The Nepomuk libraries" "http://www.kde.org" TRUE "" "Nepomuk extends the search and tagging functionalities in KMail and Akonadi")
@@ -174,20 +176,20 @@ set(libkdgantt1_SRCS
   include (kleopatra/ConfigureChecks.cmake)
 
   # These targets will always be built before anything else.
-  add_subdirectory(akonadi)
+#  add_subdirectory(akonadi)
   add_subdirectory(libkdepim)
   add_subdirectory(libkleo)
   add_subdirectory(libkpgp)
   add_subdirectory(libksieve)
   add_subdirectory(mimelib)
-  add_subdirectory(kdgantt1)
+#  add_subdirectory(kdgantt1)
   add_subdirectory(icons)
   add_subdirectory(messagecore)
   add_subdirectory(messagelist)
 
   if(QGPGME_FOUND)
     if (Boost_TOPOLOGICAL_SORT_DIR)
-      macro_optional_add_subdirectory(kleopatra)
+#      macro_optional_add_subdirectory(kleopatra)
     endif(Boost_TOPOLOGICAL_SORT_DIR)
     macro_optional_add_subdirectory(wizards)
     # The following components depend on QGpgME.
@@ -208,8 +210,8 @@ set(libkdgantt1_SRCS
     macro_optional_add_subdirectory(ksendemail)
     macro_optional_add_subdirectory(korganizer)
 
-    include( SopranoAddOntology )
-    add_subdirectory( ontologies )
+#    include( SopranoAddOntology )
+#    add_subdirectory( ontologies )
 #    add_subdirectory( nepomuk_email_feeder )
   endif(QGPGME_FOUND)
 
@@ -217,13 +219,13 @@ set(libkdgantt1_SRCS
     macro_optional_add_subdirectory(knode)
   endif(KDEPIM_BUILD_EVERYTHING)
 
-  macro_optional_add_subdirectory(akregator)
-  macro_optional_add_subdirectory(akonadiconsole)
-  macro_optional_add_subdirectory(blogilo)
+#  macro_optional_add_subdirectory(akregator)
+#  macro_optional_add_subdirectory(akonadiconsole)
+#  macro_optional_add_subdirectory(blogilo)
   macro_optional_add_subdirectory(console)
   macro_optional_add_subdirectory(kalarm)
   macro_optional_add_subdirectory(kjots)
-  macro_optional_add_subdirectory(knotes)
+#  macro_optional_add_subdirectory(knotes)
   macro_optional_add_subdirectory(strigi-analyzer)
     
   if(EXISTS ${CMAKE_SOURCE_DIR}/runtime)
@@ -236,7 +238,7 @@ set(libkdgantt1_SRCS
 
   macro_optional_add_subdirectory(kaddressbook)
   if(Q_WS_X11)
-    macro_optional_add_subdirectory(ktimetracker)
+#    macro_optional_add_subdirectory(ktimetracker)
   endif(Q_WS_X11)
 
   macro_optional_add_subdirectory(kontact) # must be the last one.
