@@ -76,7 +76,7 @@ kde4_add_app_icon(kaddressbook_bin_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/pics/hi*-ap
 kde4_add_executable(kaddressbook_bin ${kaddressbook_bin_SRCS})
 set_target_properties(kaddressbook_bin PROPERTIES OUTPUT_NAME kaddressbook)
 
-target_link_libraries(kaddressbook_bin  kaddressbookprivate ${KDE4_KHTML_LIBS} kdepim)
+target_link_libraries(kaddressbook_bin  kaddressbookprivate ${KDEPIMLIBS_KONTACTINTERFACE_LIBS} ${KDE4_KHTML_LIBS} kdepim)
 
 install(TARGETS kaddressbook_bin  ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
