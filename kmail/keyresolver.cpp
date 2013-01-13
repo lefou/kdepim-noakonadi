@@ -48,10 +48,7 @@
 #include <gpgme++/key.h>
 #include <gpgme++/keylistresult.h>
 
-#include <akonadi/collectiondialog.h>
-#include <akonadi/contact/contactsearchjob.h>
-#include <akonadi/itemcreatejob.h>
-#include <akonadi/itemmodifyjob.h>
+#include <kabc/stdaddressbook.h>
 #include <klocale.h>
 #include <kdebug.h>
 #include <kinputdialog.h>
@@ -1736,11 +1733,8 @@ Kleo::KeyResolver::ContactPreferences Kleo::KeyResolver::lookupContactPreference
   if ( it != d->mContactPreferencesMap.end() )
     return it->second;
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  job->setQuery( Akonadi::ContactSearchJob::Email, address );
-  job->exec();
-
-  const KABC::Addressee::List res = job->contacts();
+  KABC::AddressBook *ab = KABC::StdAddressBook::self( true );
+  const KABC::Addressee::List res = ab->findByEmail( address );
   ContactPreferences pref;
   if ( !res.isEmpty() ) {
     KABC::Addressee addr = res.first();
@@ -1761,56 +1755,31 @@ Kleo::KeyResolver::ContactPreferences Kleo::KeyResolver::lookupContactPreference
 void Kleo::KeyResolver::saveContactPreference( const QString& email, const ContactPreferences& pref ) const
 {
   d->mContactPreferencesMap.insert( std::make_pair( email, pref ) );
+  KABC::AddressBook *ab = KABC::StdAddressBook::self( true );
+  KABC::Addressee::List res = ab->findByEmail( email );
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  job->setQuery( Akonadi::ContactSearchJob::Email, email );
-  job->exec();
-
-  const Akonadi::Item::List items = job->items();
-
-  if ( items.isEmpty() ) {
-    bool ok = true;
-    const QString fullName = KInputDialog::getText( i18n( "Name Selection" ), i18n( "Which name shall the contact '%1' have in your address book?", email ), QString(), &ok );
-    if ( !ok )
+  KABC::Addressee addr;
+  if ( res.isEmpty() ) {
+     bool ok = true;
+     QString fullName = KInputDialog::getText( i18n( "Name Selection" ), i18n( "Which name shall the contact '%1' have in your address book?", email ), QString(), &ok );
+    if ( ok ) {
+      addr.setNameFromString( fullName );
+      addr.insertEmail( email, true );
+    } else
       return;
+  } else
+    addr = res.first();
 
-    Akonadi::CollectionDialog dlg;
-    dlg.setMimeTypeFilter( QStringList() << KABC::Addressee::mimeType() );
-    dlg.setAccessRightsFilter( Akonadi::Collection::CanCreateItem );
-    dlg.setDescription( i18n( "Select the address book folder to store the new contact in:" ) );
-    if ( !dlg.exec() )
-      return;
+  addr.insertCustom( "KADDRESSBOOK", "CRYPTOENCRYPTPREF", Kleo::encryptionPreferenceToString( pref.encryptionPreference ) );
+  addr.insertCustom( "KADDRESSBOOK", "CRYPTOSIGNPREF", Kleo::signingPreferenceToString( pref.signingPreference ) );
+  addr.insertCustom( "KADDRESSBOOK", "CRYPTOPROTOPREF", cryptoMessageFormatToString( pref.cryptoMessageFormat ) );
+  addr.insertCustom( "KADDRESSBOOK", "OPENPGPFP", pref.pgpKeyFingerprints.join( "," ) );
+  addr.insertCustom( "KADDRESSBOOK", "SMIMEFP", pref.smimeCertFingerprints.join( "," ) );
 
-    const Akonadi::Collection targetCollection = dlg.selectedCollection();
-
-    KABC::Addressee contact;
-    contact.setNameFromString( fullName );
-    contact.insertEmail( email, true );
-
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOENCRYPTPREF", Kleo::encryptionPreferenceToString( pref.encryptionPreference ) );
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOSIGNPREF", Kleo::signingPreferenceToString( pref.signingPreference ) );
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOPROTOPREF", cryptoMessageFormatToString( pref.cryptoMessageFormat ) );
-    contact.insertCustom( "KADDRESSBOOK", "OPENPGPFP", pref.pgpKeyFingerprints.join( "," ) );
-    contact.insertCustom( "KADDRESSBOOK", "SMIMEFP", pref.smimeCertFingerprints.join( "," ) );
-
-    Akonadi::Item item( KABC::Addressee::mimeType() );
-    item.setPayload<KABC::Addressee>( contact );
-
-    new Akonadi::ItemCreateJob( item, targetCollection );
-  } else {
-    Akonadi::Item item = items.first();
-
-    KABC::Addressee contact = item.payload<KABC::Addressee>();
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOENCRYPTPREF", Kleo::encryptionPreferenceToString( pref.encryptionPreference ) );
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOSIGNPREF", Kleo::signingPreferenceToString( pref.signingPreference ) );
-    contact.insertCustom( "KADDRESSBOOK", "CRYPTOPROTOPREF", cryptoMessageFormatToString( pref.cryptoMessageFormat ) );
-    contact.insertCustom( "KADDRESSBOOK", "OPENPGPFP", pref.pgpKeyFingerprints.join( "," ) );
-    contact.insertCustom( "KADDRESSBOOK", "SMIMEFP", pref.smimeCertFingerprints.join( "," ) );
-
-    item.setPayload<KABC::Addressee>( contact );
-
-    new Akonadi::ItemModifyJob( item );
-  }
+  ab->insertAddressee( addr );
+  KABC::Ticket *ticket = ab->requestSaveTicket( addr.resource() );
+  if ( ticket )
+    ab->save( ticket );
 
   // Assumption: 'pref' comes from d->mContactPreferencesMap already, no need to update that
 }

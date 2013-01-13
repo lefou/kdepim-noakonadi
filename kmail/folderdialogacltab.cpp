@@ -40,9 +40,10 @@
 #include "autoqpointer.h"
 
 #include <addressesdialog.h>
-#include <akonadi/contact/contactgroupexpandjob.h>
-#include <akonadi/contact/contactgroupsearchjob.h>
+#include <kabc/addresseelist.h>
 #include <kio/jobuidelegate.h>
+#include <kabc/distributionlist.h>
+#include <kabc/stdaddressbook.h>
 #include <kpushbutton.h>
 #include <kdebug.h>
 #include <klocale.h>
@@ -211,7 +212,9 @@ public:
       mModified( false ), mNew( false ) {}
 
   void load( const ACLListEntry& entry );
-  void save( ACLList& list, IMAPUserIdFormat userIdFormat );
+  void save( ACLList& list,
+             KABC::AddressBook* abook,
+             IMAPUserIdFormat userIdFormat );
 
   QString userId() const { return text( 0 ); }
   void setUserId( const QString& userId ) { setText( 0, userId ); }
@@ -273,22 +276,19 @@ void KMail::FolderDialogACLTab::ListViewItem::load( const ACLListEntry& entry )
 }
 
 void KMail::FolderDialogACLTab::ListViewItem::save( ACLList& aclList,
-                                                    IMAPUserIdFormat userIdFormat )
+                                                 KABC::AddressBook* addressBook,
+                                                 IMAPUserIdFormat userIdFormat )
 {
   // expand distribution lists
-  Akonadi::ContactGroupSearchJob *job = new Akonadi::ContactGroupSearchJob();
-  job->setQuery( Akonadi::ContactGroupSearchJob::Name, userId() );
-  job->exec();
-
-  KABC::ContactGroup::List groups = job->contactGroups();
-  if ( !groups.isEmpty() ) {
+  KABC::DistributionList* list = addressBook->findDistributionListByName( userId(),  Qt::CaseInsensitive );
+  if ( list ) {
     Q_ASSERT( mModified ); // it has to be new, it couldn't be stored as a distr list name....
-    Akonadi::ContactGroupExpandJob *expandJob = new Akonadi::ContactGroupExpandJob( groups.first() );
-    expandJob->exec();
-
-    const KABC::Addressee::List contacts = expandJob->contacts();
-    foreach ( const KABC::Addressee &contact, contacts ) {
-      const QString email = addresseeToUserId( contact, userIdFormat );
+    KABC::DistributionList::Entry::List entryList = list->entries();
+    KABC::DistributionList::Entry::List::ConstIterator it; // nice number of "::"!
+    for( it = entryList.constBegin(); it != entryList.constEnd(); ++it ) {
+      QString email = (*it).email();
+      if ( email.isEmpty() )
+        email = addresseeToUserId( (*it).addressee(), userIdFormat );
       ACLListEntry entry( email, QString(), mPermissions );
       entry.changed = true;
       aclList.append( entry );
@@ -669,12 +669,15 @@ bool KMail::FolderDialogACLTab::save()
   // Now, how to expand them? Playing with listviewitem iterators and inserting
   // listviewitems at the same time sounds dangerous, so let's just save into
   // ACLList and reload that.
+  KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
   ACLList aclList;
 
   QTreeWidgetItemIterator it( mListView );
   while ( QTreeWidgetItem* item = *it ) {
     ListViewItem* ACLitem = static_cast<ListViewItem *>( item );
-    ACLitem->save( aclList, mUserIdFormat );
+    ACLitem->save( aclList,
+                   addressBook,
+                   mUserIdFormat );
     ++it;
   }
   loadListView( aclList );

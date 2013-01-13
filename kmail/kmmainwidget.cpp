@@ -160,7 +160,7 @@ using KMail::TemplateParser;
 #include "messagetree.h"
 #include "autoqpointer.h"
 
-#include <akonadi/contact/contactsearchjob.h>
+#include <kabc/stdaddressbook.h>
 #include <kpimutils/email.h>
 
 #include <errno.h> // ugh
@@ -3382,11 +3382,8 @@ void KMMainWidget::slotMsgPopup( KMMessage &msg, const KUrl &aUrl, const QPoint 
       menu->addSeparator();
 
       QString email =  KPIMUtils::firstEmailAddress( aUrl.path() );
-      Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-      job->setQuery( Akonadi::ContactSearchJob::Email, email );
-      job->exec();
-
-      const KABC::Addressee::List addresseeList = job->contacts();
+      KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+      KABC::Addressee::List addresseeList = addressBook->findByEmail( email );
 
       if ( addresseeList.count() == 0 ) {
         menu->addAction( mMsgView->addAddrBookAction() );

@@ -20,14 +20,14 @@
 #include "kmaddrbook.h"
 #include "kcursorsaver.h"
 
-#include <akonadi/contact/contactsearchjob.h>
-#include <akonadi/contact/contactgroupsearchjob.h>
+#include <kabc/stdaddressbook.h>
+#include <kabc/vcardconverter.h>
 
 #include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
 
-#include <QtCore/QRegExp>
+#include <QRegExp>
 
 #include <unistd.h>
 
@@ -35,18 +35,15 @@ void KabcBridge::addresses(QStringList& result) // includes lists
 {
   KCursorSaver busy(KBusyPtr::busy()); // loading might take a while
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  if ( !job->exec() )
-    return;
-
-  const KABC::Addressee::List contacts = job->contacts();
-  foreach ( const KABC::Addressee &contact, contacts ) {
-    const QStringList emails = contact.emails();
-    QString n = contact.prefix() + ' ' +
-                contact.givenName() + ' ' +
-                contact.additionalName() + ' ' +
-                contact.familyName() + ' ' +
-                contact.suffix();
+  KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+  KABC::AddressBook::ConstIterator it;
+  for( it = addressBook->constBegin(); it != addressBook->constEnd(); ++it ) {
+    const QStringList emails = (*it).emails();
+    QString n = (*it).prefix() + ' ' +
+                (*it).givenName() + ' ' +
+                (*it).additionalName() + ' ' +
+                (*it).familyName() + ' ' +
+                (*it).suffix();
     n = n.simplified();
 
     QRegExp needQuotes("[^ 0-9A-Za-z\\x0080-\\xFFFF]");
@@ -78,30 +75,21 @@ void KabcBridge::addresses(QStringList& result) // includes lists
     }
   }
 
-  Akonadi::ContactGroupSearchJob *groupJob = new Akonadi::ContactGroupSearchJob();
-  if ( !groupJob->exec() )
-    return;
-
-  const KABC::ContactGroup::List contactGroups = groupJob->contactGroups();
-  foreach ( const KABC::ContactGroup &group, contactGroups )
-    result.append( group.name() );
+  result += addressBook->allDistributionListNames();
 
   result.sort();
 }
 
 QStringList KabcBridge::addresses()
 {
-  QStringList entries;
+    QStringList entries;
+    KABC::AddressBook::ConstIterator it;
 
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  if ( !job->exec() )
-    return QStringList();
-
-  const KABC::Addressee::List contacts = job->contacts();
-  foreach ( const KABC::Addressee &contact, contacts )
-    entries.append( contact.fullEmail() );
-
-  return entries;
+    const KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+    for( it = addressBook->begin(); it != addressBook->end(); ++it ) {
+        entries += (*it).fullEmail();
+    }
+    return entries;
 }
 
 //-----------------------------------------------------------------------------
@@ -111,18 +99,12 @@ QString KabcBridge::expandNickName( const QString& nickName )
     return QString();
 
   const QString lowerNickName = nickName.toLower();
-
-  //TODO: optimize this by search contact by nickname
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  if ( !job->exec() )
-    return QString();
-
-  const KABC::Addressee::List contacts = job->contacts();
-  foreach ( const KABC::Addressee &contact, contacts ) {
-    if ( contact.nickName().toLower() == lowerNickName )
-      return contact.fullEmail();
+  const KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+  for( KABC::AddressBook::ConstIterator it = addressBook->begin();
+       it != addressBook->end(); ++it ) {
+    if ( (*it).nickName().toLower() == lowerNickName )
+      return (*it).fullEmail();
   }
-
   return QString();
 }
 
@@ -131,16 +113,13 @@ QString KabcBridge::expandNickName( const QString& nickName )
 
 QStringList KabcBridge::categories()
 {
+  KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+  KABC::Addressee::List addresses = addressBook->allAddressees();
   QStringList allcategories, aux;
 
-  //TODO: Retrieve the categories from Nepomuk directly?!?
-  Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-  if ( !job->exec() )
-    return QStringList();
-
-  const KABC::Addressee::List contacts = job->contacts();
-  foreach ( const KABC::Addressee &contact, contacts ) {
-    aux = contact.categories();
+  for ( KABC::Addressee::List::Iterator it = addresses.begin();
+        it != addresses.end(); ++it ) {
+    aux = ( *it ).categories();
     for ( QStringList::ConstIterator itAux = aux.constBegin();
           itAux != aux.constEnd(); ++itAux ) {
       // don't have duplicates in allcategories
@@ -148,6 +127,5 @@ QStringList KabcBridge::categories()
         allcategories += *itAux;
     }
   }
-
   return allcategories;
 }
