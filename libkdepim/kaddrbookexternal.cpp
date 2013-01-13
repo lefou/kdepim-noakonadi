@@ -20,7 +20,7 @@
 #include "kaddrbookexternal.h"
 
 #include <akonadi/collection.h>
-#include <akonadi/collectiondialog.h>
+#include <akonadi/contact/addressbookselectiondialog.h>
 #include <akonadi/contact/contacteditordialog.h>
 #include <akonadi/contact/contactgroupexpandjob.h>
 #include <akonadi/contact/contactgroupsearchjob.h>
@@ -49,14 +49,11 @@ void KAddrBookExternal::openEmail( const QString &email, const QString &addr, QW
   if ( items.isEmpty() ) { // if not...
 
     // ask user in which address book the new contact shall be stored
-    const QStringList mimeTypes( KABC::Addressee::mimeType() );
-    Akonadi::CollectionDialog dlg;
-    dlg.setMimeTypeFilter( mimeTypes );
-    dlg.setAccessRightsFilter( Akonadi::Collection::CanCreateItem );
+    Akonadi::AddressBookSelectionDialog dlg( Akonadi::AddressBookSelectionDialog::ContactsOnly );
     if ( !dlg.exec() )
       return;
 
-    const Akonadi::Collection addressBook = dlg.selectedCollection();
+    const Akonadi::Collection addressBook = dlg.selectedAddressBook();
     if ( !addressBook.isValid() )
       return;
 
@@ -172,15 +169,11 @@ bool KAddrBookExternal::addVCard( const KABC::Addressee &addressee, QWidget *par
 bool KAddrBookExternal::addAddressee( const KABC::Addressee &addr )
 {
   // ask user in which address book the new contact shall be stored
-  const QStringList mimeTypes( KABC::Addressee::mimeType() );
-  Akonadi::CollectionDialog dlg;
-  dlg.setMimeTypeFilter( mimeTypes );
-  dlg.setAccessRightsFilter( Akonadi::Collection::CanCreateItem );
-
+  Akonadi::AddressBookSelectionDialog dlg( Akonadi::AddressBookSelectionDialog::ContactsOnly );
   if ( !dlg.exec() )
     return false;
 
-  const Akonadi::Collection addressBook = dlg.selectedCollection();
+  const Akonadi::Collection addressBook = dlg.selectedAddressBook();
   if ( !addressBook.isValid() )
     return false;
 
