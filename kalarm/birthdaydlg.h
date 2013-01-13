@@ -36,7 +36,6 @@ class RepetitionButton;
 class LateCancelSelector;
 class Reminder;
 class BLineEdit;
-class BirthdaySortModel;
 
 
 class BirthdayDlg : public KDialog
@@ -53,10 +52,10 @@ class BirthdayDlg : public KDialog
 		void           slotSelectionChanged();
 		void           slotTextLostFocus();
 		void           resizeViewColumns();
+		void           addrBookError();
 		void           setColours(const QColor& fg, const QColor& bg);
 
 	private:
-    BirthdaySortModel*    mBirthdaySortModel;
 		QTreeView*            mListView;
 		BLineEdit*            mPrefix;
 		BLineEdit*            mSuffix;

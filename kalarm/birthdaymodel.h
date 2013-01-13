@@ -1,7 +1,7 @@
 /*
  *  birthdaymodel.h  -  model class for birthdays from address book
  *  Program:  kalarm
- *  Copyright © 2009 by Tobias Koenig <tokoe@kde.org>
+ *  Copyright © 2007,2008 by David Jarvie <djarvie@kde.org>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,58 +18,68 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include <libkdepim/contactstreemodel.h>
-
-#include <QtGui/QSortFilterProxyModel>
-
 #ifndef BIRTHDAYMODEL_H
 #define BIRTHDAYMODEL_H
 
-namespace Akonadi
+#include "kalarm.h"
+
+#include <QAbstractTableModel>
+#include <QSortFilterProxyModel>
+#include <QList>
+#include <QDate>
+
+namespace KABC { class AddressBook; }
+
+
+class BirthdayModel : public QAbstractTableModel
 {
-  class ChangeRecorder;
-  class Session;
-}
+		Q_OBJECT
+	public:
+		enum {   // data columns
+			NameColumn, DateColumn,
+			ColumnCount
+		};
+		struct Data
+		{
+			Data(const QString& n, const QDate& b) : birthday(b), name(n) {}
+			QDate   birthday;
+			QString name;
+		};
 
-/**
- * @short Provides the global model for all contacts
- *
- * This model provides the EntityTreeModel for all contacts.
- * The model is accessable via the static instance() method.
- */
-class BirthdayModel : public Akonadi::ContactsTreeModel
-{
-  public:
-    /**
-     * Destroys the global contact model.
-     */
-    ~BirthdayModel();
+		static BirthdayModel* instance(QObject* parent = 0);
+		static void         close();
+		~BirthdayModel();
+		void                setPrefixSuffix(const QString& prefix, const QString& suffix);
+		virtual int         rowCount(const QModelIndex& parent = QModelIndex()) const;
+		virtual int         columnCount(const QModelIndex& parent = QModelIndex()) const;
+		virtual QModelIndex index(int row, int column = 0, const QModelIndex& parent = QModelIndex()) const;
+		virtual QVariant    data(const QModelIndex&, int role = Qt::DisplayRole) const;
+		virtual QVariant    headerData(int section, Qt::Orientation, int role = Qt::DisplayRole) const;
+		Data*               rowData(const QModelIndex&) const;
 
-    /**
-     * Returns the global contact model instance.
-     */
-    static BirthdayModel* instance();
+	signals:
+		void                addrBookError();    // error loading address book
 
-  private:
-    BirthdayModel(Akonadi::Session *session, Akonadi::ChangeRecorder *recorder);
+	private slots:
+		void                refresh();
 
-    static BirthdayModel *mInstance;
+	private:
+		explicit BirthdayModel(QObject* parent = 0);
+		void                loadAddressBook();
+
+		static BirthdayModel* mInstance;
+		static const KABC::AddressBook* mAddressBook;
+		QList<Data*> mData;
+		QString      mPrefix;
+		QString      mSuffix;
 };
+
 
 class BirthdaySortModel : public QSortFilterProxyModel
 {
 	public:
-		BirthdaySortModel(QObject* parent = 0);
-
-    void setPrefixSuffix(const QString &prefix, const QString &suffix);
-
-  protected:
-    virtual bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
-
-  private:
-    QStringList mContactsWithAlarm;
-    QString mPrefix;
-    QString mSuffix;
+		BirthdaySortModel(QAbstractItemModel* baseModel, QObject* parent);
+		BirthdayModel::Data* rowData(const QModelIndex&) const;
 };
 
-#endif
+#endif // BIRTHDAYMODEL_H

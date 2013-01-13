@@ -43,7 +43,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include <akonadi/control.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfiggroup.h>
@@ -52,7 +51,6 @@
 #include <kactioncollection.h>
 #include <khbox.h>
 #include <kdebug.h>
-#include <akonadi/entitymimetypefiltermodel.h>
 #include "kdescendantsproxymodel_p.h"
 
 using namespace KCal;
@@ -66,7 +64,6 @@ BirthdayDlg::BirthdayDlg(QWidget* parent)
 	setCaption(i18nc("@title:window", "Import Birthdays From KAddressBook"));
 	setButtons(Ok | Cancel);
 	setDefaultButton(Ok);
-
 	connect(this, SIGNAL(okClicked()), SLOT(slotOk()));
 
 	QWidget* topWidget = new QWidget(this);
@@ -114,36 +111,23 @@ BirthdayDlg::BirthdayDlg(QWidget* parent)
 	topLayout->addWidget(group);
 	QVBoxLayout* layout = new QVBoxLayout(group);
 	layout->setMargin(0);
-
-  // Start Akonadi server as we need it for the birthday model to access contacts information
-  Akonadi::Control::start();
-
-	BirthdayModel* model = BirthdayModel::instance();
+	BirthdayModel* model = BirthdayModel::instance(this);
+	connect(model, SIGNAL(addrBookError()), SLOT(addrBookError()));
 	connect(model, SIGNAL(dataChanged(const QModelIndex&,const QModelIndex&)), SLOT(resizeViewColumns()));
-
-  KDescendantsProxyModel *descendantsModel = new KDescendantsProxyModel(this);
-  descendantsModel->setSourceModel(model);
-
-  Akonadi::EntityMimeTypeFilterModel *mimeTypeFilter = new Akonadi::EntityMimeTypeFilterModel(this);
-  mimeTypeFilter->setSourceModel(descendantsModel);
-  mimeTypeFilter->addMimeTypeExclusionFilter(Akonadi::Collection::mimeType());
-  mimeTypeFilter->setHeaderGroup(Akonadi::EntityTreeModel::ItemListHeaders);
-
-  mBirthdaySortModel = new BirthdaySortModel(this);
-  mBirthdaySortModel->setSourceModel(mimeTypeFilter);
-  mBirthdaySortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
-  mBirthdaySortModel->setPrefixSuffix(mPrefixText, mSuffixText);
+	model->setPrefixSuffix(mPrefixText, mSuffixText);
+	BirthdaySortModel* sortModel = new BirthdaySortModel(model, this);
+	sortModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	mListView = new QTreeView(group);
-	mListView->setModel(mBirthdaySortModel);
+	mListView->setModel(sortModel);
 	mListView->setRootIsDecorated(false);    // don't show expander icons
 	mListView->setSortingEnabled(true);
-	mListView->sortByColumn(0);
+	mListView->sortByColumn(BirthdayModel::NameColumn);
 	mListView->setAllColumnsShowFocus(true);
 	mListView->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	mListView->setSelectionBehavior(QAbstractItemView::SelectRows);
 	mListView->setTextElideMode(Qt::ElideRight);
-	mListView->header()->setResizeMode(0, QHeaderView::Stretch);
-	mListView->header()->setResizeMode(1, QHeaderView::ResizeToContents);
+	mListView->header()->setResizeMode(BirthdayModel::NameColumn, QHeaderView::Stretch);
+	mListView->header()->setResizeMode(BirthdayModel::DateColumn, QHeaderView::ResizeToContents);
 	connect(mListView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)), SLOT(slotSelectionChanged()));
 	mListView->setWhatsThis(i18nc("@info:whatsthis",
 	      "<para>Select birthdays to set alarms for.<nl/>"
@@ -243,6 +227,14 @@ BirthdayDlg::BirthdayDlg(QWidget* parent)
 }
 
 /******************************************************************************
+* Display an error message about failure to load address book.
+*/
+void BirthdayDlg::addrBookError()
+{
+	KMessageBox::error(this, i18nc("@info", "Error reading address book"));
+}
+
+/******************************************************************************
 * Return a list of events for birthdays chosen.
 */
 QList<KAEvent> BirthdayDlg::events() const
@@ -256,18 +248,18 @@ QList<KAEvent> BirthdayDlg::events() const
 	KDateTime todayStart(today, KDateTime::ClockTime);
 	int thisYear = today.year();
 	int reminder = mReminder->minutes();
+	const BirthdaySortModel* model = static_cast<const BirthdaySortModel*>(indexes[0].model());
 	for (int i = 0;  i < count;  ++i)
 	{
-    const QModelIndex nameIndex = indexes.at(i).model()->index(indexes.at(i).row(), 0);
-    const QModelIndex birthdayIndex = indexes.at(i).model()->index(indexes.at(i).row(), 1);
-
-    const QString name = nameIndex.data( Qt::DisplayRole ).toString();
-		QDate date = birthdayIndex.data( BirthdayModel::DateRole ).toDate();
+		BirthdayModel::Data* data = model->rowData(indexes[i]);
+		if (!data)
+			continue;
+		QDate date = data->birthday;
 		date.setYMD(thisYear, date.month(), date.day());
 		if (date <= today)
 			date.setYMD(thisYear + 1, date.month(), date.day());
 		KAEvent event(KDateTime(date, KDateTime::ClockTime),
-			      mPrefix->text() + name + mSuffix->text(),
+			      mPrefix->text() + data->name + mSuffix->text(),
 			      mFontColourButton->bgColour(), mFontColourButton->fgColour(),
 			      mFontColourButton->font(), KAEventData::MESSAGE, mLateCancel->minutes(),
 			      mFlags, true);
@@ -339,7 +331,7 @@ void BirthdayDlg::setColours(const QColor& fgColour, const QColor& bgColour)
 */
 void BirthdayDlg::resizeViewColumns()
 {
-	mListView->resizeColumnToContents(1);
+	mListView->resizeColumnToContents(BirthdayModel::DateColumn);
 }
 
 /******************************************************************************
@@ -356,6 +348,6 @@ void BirthdayDlg::slotTextLostFocus()
 		// Text has changed - re-evaluate the selection list
 		mPrefixText = prefix;
 		mSuffixText = suffix;
-    mBirthdaySortModel->setPrefixSuffix(mPrefixText, mSuffixText);
+		BirthdayModel::instance()->setPrefixSuffix(mPrefixText, mSuffixText);
 	}
 }
