@@ -39,7 +39,7 @@ public:
     EmailCompletionRole = EntityTreeModel::UserRole
   };
 
-  explicit ContactsModel(ChangeRecorder *monitor, QObject *parent = 0);
+  ContactsModel(ChangeRecorder *monitor, QObject *parent = 0);
   virtual ~ContactsModel();
 
 protected:
