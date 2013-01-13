@@ -3,8 +3,6 @@
     Copyright (c) 2002 Anders Lund <anders.lund@lund.tdcadsl.dk>
                        Tobias Koenig <tokoe@kde.org>
 
-    Copyright (c) 2009 Laurent Montel <montel@kde.org>
-
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -28,18 +26,21 @@
 #define STYLEPAGE_H
 
 #include <QtGui/QWidget>
-#include "contactfields.h"
+
+#include <kabc/field.h>
 
 class QLabel;
 class QPixmap;
 class KComboBox;
+
+namespace KABC { class AddressBook; }
 
 class StylePage : public QWidget
 {
   Q_OBJECT
 
   public:
-    explicit StylePage( QWidget* parent = 0, const char* name = 0 );
+    explicit StylePage( KABC::AddressBook *ab, QWidget* parent = 0, const char* name = 0 );
     ~StylePage();
 
     /**
@@ -61,22 +62,22 @@ class StylePage : public QWidget
     /**
      * Set the sort criterion field.
      */
-    void setSortField( ContactFields::Field field );
+    void setSortField( KABC::Field *field );
 
     /**
      * Returns the sort criterion field.
      */
-    ContactFields::Field sortField() const;
+     KABC::Field* sortField();
 
     /**
-     * Sets the sort order.
+     * Set the sort type.
      */
-    void setSortOrder( Qt::SortOrder sortOrder );
+    void setSortAscending( bool value = true );
 
     /**
-     * Returns the sort order.
+     * Returns whether the sort type is ascending.
      */
-    Qt::SortOrder sortOrder() const;
+    bool sortAscending();
 
   Q_SIGNALS:
     /**
@@ -94,7 +95,8 @@ class StylePage : public QWidget
     KComboBox *mStyleCombo;
     QLabel *mPreview;
 
-    ContactFields::Fields mFields;
+    KABC::AddressBook *mAddressBook;
+    KABC::Field::List mFields;
 };
 
 #endif // STYLEPAGE_H

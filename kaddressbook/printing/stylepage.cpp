@@ -30,18 +30,13 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QVBoxLayout>
 
+#include <kabc/addressbook.h>
 #include <KComboBox>
 #include <KDialog>
 #include <KLocale>
 
-// helper method to sort contact fields by field label
-static bool contactFieldsNameLesser( const ContactFields::Field &field, const ContactFields::Field &otherField )
-{
-  return ( QString::localeAwareCompare( ContactFields::label( field ), ContactFields::label( otherField ) ) < 0 );
-}
-
-StylePage::StylePage( QWidget* parent,  const char* name )
-  : QWidget( parent )
+StylePage::StylePage( KABC::AddressBook *ab, QWidget* parent,  const char* name )
+  : QWidget( parent ), mAddressBook( ab )
 {
   setObjectName( name );
   initGUI();
@@ -76,44 +71,43 @@ void StylePage::clearStyleNames()
   mStyleCombo->clear();
 }
 
-void StylePage::setSortField( ContactFields::Field field )
+void StylePage::setSortField( KABC::Field *field )
 {
-  mFieldCombo->setCurrentIndex( mFields.indexOf( field ) );
+  mFieldCombo->setItemText( mFieldCombo->currentIndex(), field->label() );
 }
 
-void StylePage::setSortOrder( Qt::SortOrder sortOrder )
+void StylePage::setSortAscending( bool value )
 {
-  if ( sortOrder == Qt::AscendingOrder )
+  if ( value )
     mSortTypeCombo->setCurrentIndex( 0 );
   else
     mSortTypeCombo->setCurrentIndex( 1 );
 }
 
-ContactFields::Field StylePage::sortField() const
+KABC::Field* StylePage::sortField()
 {
   if ( mFieldCombo->currentIndex() == -1 )
-    return ContactFields::GivenName;
+    return mFields[ 0 ];
 
   return mFields[ mFieldCombo->currentIndex() ];
 }
 
-Qt::SortOrder StylePage::sortOrder() const
+bool StylePage::sortAscending()
 {
-  return ( mSortTypeCombo->currentIndex() == 0 ? Qt::AscendingOrder : Qt::DescendingOrder );
+  return ( mSortTypeCombo->currentIndex() == 0 );
 }
 
 void StylePage::initFieldCombo()
 {
+  if ( !mAddressBook )
+    return;
+
   mFieldCombo->clear();
 
-  mFields = ContactFields::allFields();
-  mFields.remove( 0 ); // remove ContactFields::Undefined
-
-  qSort( mFields.begin(), mFields.end(), contactFieldsNameLesser );
-
-  ContactFields::Fields::ConstIterator it;
+  mFields = mAddressBook->fields( KABC::Field::All );
+  KABC::Field::List::ConstIterator it;
   for ( it = mFields.constBegin(); it != mFields.constEnd(); ++it )
-    mFieldCombo->addItem( ContactFields::label( *it ) );
+    mFieldCombo->addItem( (*it)->label() );
 }
 
 void StylePage::initGUI()
@@ -169,7 +163,6 @@ void StylePage::initGUI()
   styleLayout->addWidget( mPreview );
 
   topLayout->addWidget( group, 1, 1 );
-  topLayout->setRowStretch( 1, 1 );
 }
 
 #include "stylepage.moc"

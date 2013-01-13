@@ -26,26 +26,26 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QWidget>
 
-#include <kdebug.h>
+#include <kabc/field.h>
 #include <kstandarddirs.h>
+#include <kdebug.h>
 
 #include "printingwizard.h"
 
 using namespace KABPrinting;
 
 
-PrintStyle::PrintStyle( PrintingWizard* parent )
-  : QObject( parent ), mWizard( parent )
+PrintStyle::PrintStyle( PrintingWizard* parent, const char* name )
+  : QObject( parent ), mWizard( parent ), mSortField( 0 )
 {
-  mSortField = ContactFields::GivenName;
-  mSortOrder = Qt::AscendingOrder;
+  setObjectName( name );
 }
 
 PrintStyle::~PrintStyle()
 {
 }
 
-const QPixmap& PrintStyle::preview() const
+const QPixmap& PrintStyle::preview()
 {
   return mPreview;
 }
@@ -58,10 +58,9 @@ void PrintStyle::setPreview( const QPixmap& image )
 bool PrintStyle::setPreview( const QString& fileName )
 {
   QPixmap preview;
-
-  const QString path = KStandardDirs::locate( "appdata", "printing/" + fileName );
+  QString path = KStandardDirs::locate( "appdata", "printing/" + fileName );
   if ( path.isEmpty() ) {
-    kDebug(5720) << "PrintStyle::setPreview: preview not locatable.";
+    kDebug(5720) <<"PrintStyle::setPreview: preview not locatable.";
     return false;
   } else {
     if ( preview.load( path ) ) {
@@ -74,7 +73,7 @@ bool PrintStyle::setPreview( const QString& fileName )
   }
 }
 
-PrintingWizard *PrintStyle::wizard() const
+PrintingWizard *PrintStyle::wizard()
 {
   return mWizard;
 }
@@ -111,24 +110,24 @@ void PrintStyle::hidePages()
   }
 }
 
-void PrintStyle::setPreferredSortOptions( ContactFields::Field field, Qt::SortOrder sortOrder )
+void PrintStyle::setPreferredSortOptions( KABC::Field *field, bool ascending )
 {
   mSortField = field;
-  mSortOrder = sortOrder;
+  mSortType = ascending;
 }
 
-ContactFields::Field PrintStyle::preferredSortField() const
+KABC::Field* PrintStyle::preferredSortField()
 {
   return mSortField;
 }
 
-Qt::SortOrder PrintStyle::preferredSortOrder() const
+bool PrintStyle::preferredSortType()
 {
-  return mSortOrder;
+  return mSortType;
 }
 
-PrintStyleFactory::PrintStyleFactory( PrintingWizard* parent )
-  : mParent( parent )
+PrintStyleFactory::PrintStyleFactory( PrintingWizard* parent, const char* name )
+        : mParent( parent ), mName( name )
 {
 }
 

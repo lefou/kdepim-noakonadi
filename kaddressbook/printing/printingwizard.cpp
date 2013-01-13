@@ -3,7 +3,6 @@
     Copyright (c) 1996-2002 Mirko Boehm <mirko@kde.org>
                             Tobias Koenig <tokoe@kde.org>
 
-    Copyright (c) 2009 Laurent Montel <montel@kde.org>
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation; either version 2 of the License, or
@@ -25,43 +24,52 @@
 
 #include "printingwizard.h"
 
-#include "contactselectionwidget.h"
-#include "contactsorter.h"
-#include "printprogress.h"
-#include "printstyle.h"
-#include "stylepage.h"
+#include <QtGui/QPushButton>
+#include <QtGui/QPrinter>
 
-// including the styles
-#include "detailledstyle.h"
-#include "mikesstyle.h"
-#include "ringbinderstyle.h"
-
+#include <kabc/addresseelist.h>
 #include <kapplication.h>
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kglobal.h>
 #include <klocale.h>
 
-#include <QtGui/QPushButton>
-#include <QtGui/QPrinter>
+// including the styles
+#include "detailledstyle.h"
+#include "mikesstyle.h"
+#include "ringbinderstyle.h"
+
+#include "kabprefs.h"
+#include "printprogress.h"
+#include "printstyle.h"
+#include "printsortmode.h"
 
 using namespace KABPrinting;
 
-PrintingWizard::PrintingWizard( QPrinter *printer, QAbstractItemModel *itemModel,
-                                QItemSelectionModel *selectionModel, QWidget *parent )
-  : KAssistantDialog( parent ), mPrinter( printer ), mStyle( 0 )
+PrintingWizard::PrintingWizard( QPrinter *printer, KABC::AddressBook* ab,
+                                const QStringList& selection, QWidget *parent )
+  : KAssistantDialog( parent ), mPrinter( printer ), mAddressBook( ab ),
+    mSelection( selection ), mStyle( 0 )
 {
-  setCaption( i18n( "Print Contacts" ) );
-
-  mSelectionPage = new ContactSelectionWidget( itemModel, selectionModel, this );
-  mSelectionPage->setMessageText( i18n( "Which contacts do you want to print?" ) );
-
-  KPageWidgetItem *mSelectionPageItem = new KPageWidgetItem( mSelectionPage, i18n( "Choose Contacts to Print" ) );
+  mSelectionPage = new SelectionPage( this );
+  mSelectionPage->setUseSelection( !selection.isEmpty() );
+  KPageWidgetItem *mSelectionPageItem = new KPageWidgetItem( mSelectionPage, i18n("Choose Contacts to Print") );
   addPage( mSelectionPageItem );
+
+  mFilters = Filter::restore( KGlobal::config().data(), "Filter" );
+  QStringList filters;
+  for ( Filter::List::ConstIterator it = mFilters.constBegin(); it != mFilters.constEnd(); ++it )
+    filters.append( (*it).name() );
+
+  mSelectionPage->setFilters( filters );
+
+  mSelectionPage->setCategories( KABPrefs::instance()->customCategories() );
+
   setAppropriate( mSelectionPageItem, true );
 
-  mStylePage = new StylePage( this );
-  connect( mStylePage, SIGNAL( styleChanged( int ) ), SLOT( slotStyleSelected( int ) ) );
+
+  mStylePage = new StylePage( mAddressBook, this );
+  connect( mStylePage, SIGNAL( styleChanged(int) ), SLOT( slotStyleSelected(int) ) );
   addPage( mStylePage, i18n("Choose Printing Style") );
 
   registerStyles();
@@ -72,11 +80,6 @@ PrintingWizard::PrintingWizard( QPrinter *printer, QAbstractItemModel *itemModel
 
 PrintingWizard::~PrintingWizard()
 {
-}
-
-void PrintingWizard::setDefaultAddressBook( const Akonadi::Collection &addressBook )
-{
-  mSelectionPage->setDefaultAddressBook( addressBook );
 }
 
 void PrintingWizard::accept()
@@ -101,16 +104,17 @@ void PrintingWizard::slotStyleSelected( int index )
   if ( index < 0 || index >= mStyleFactories.count() )
     return;
 
+  //enableButton( KDialog::User1, false ); // finish button
+
   if ( mStyle )
     mStyle->hidePages();
 
   mStyle = mStyleList.value( index );
   if ( !mStyle ) {
     PrintStyleFactory *factory = mStyleFactories.at( index );
-    kDebug(5720) << "PrintingWizardImpl::slotStyleSelected:"
-                 << "creating print style"
-                 << factory->description();
-
+    kDebug(5720) <<"PrintingWizardImpl::slotStyleSelected:"
+                  << "creating print style"
+                  << factory->description();
     mStyle = factory->create();
     mStyleList.insert( index, mStyle );
   }
@@ -119,8 +123,17 @@ void PrintingWizard::slotStyleSelected( int index )
 
   mStylePage->setPreview( mStyle->preview() );
 
-  mStylePage->setSortField( mStyle->preferredSortField() );
-  mStylePage->setSortOrder( mStyle->preferredSortOrder() );
+  //setFinishEnabled( page( pageCount() - 1 ), true );
+
+  if ( mStyle->preferredSortField() != 0 ) {
+    mStylePage->setSortField( mStyle->preferredSortField() );
+    mStylePage->setSortAscending( mStyle->preferredSortType() );
+  }
+}
+
+KABC::AddressBook* PrintingWizard::addressBook()
+{
+  return mAddressBook;
 }
 
 QPrinter* PrintingWizard::printer()
@@ -131,23 +144,68 @@ QPrinter* PrintingWizard::printer()
 void PrintingWizard::print()
 {
   // create and show print progress widget:
-  mProgress = new PrintProgress( this );
-  KPageWidgetItem *progressItem = new KPageWidgetItem( mProgress, i18n( "Print Progress" ) );
+  PrintProgress *progress = new PrintProgress( this );
+  KPageWidgetItem *progressItem = new KPageWidgetItem( progress, i18n( "Print Progress" ) );
   addPage( progressItem );
   setCurrentPage( progressItem );
   kapp->processEvents();
 
-  KABC::Addressee::List contacts = mSelectionPage->selectedContacts();
+  // prepare list of contacts to print:
 
-  const ContactSorter sorter( mStylePage->sortField(), mStylePage->sortOrder() );
-  sorter.sort( contacts );
+  KABC::AddresseeList list;
+  if ( mStyle != 0 ) {
+    if ( mSelectionPage->useSelection() ) {
+      QStringList::ConstIterator it;
+      for ( it = mSelection.constBegin(); it != mSelection.constEnd(); ++it ) {
+        KABC::Addressee addr = addressBook()->findByUid( *it );
+        if ( !addr.isEmpty() )
+          list.append( addr );
+      }
+    } else if ( mSelectionPage->useFilters() ) {
+      // find contacts that can pass selected filter
+      Filter::List::ConstIterator filterIt;
+      for ( filterIt = mFilters.constBegin(); filterIt != mFilters.constEnd(); ++filterIt )
+        if ( (*filterIt).name() == mSelectionPage->filter() )
+          break;
+
+      KABC::AddressBook::iterator it;
+      for ( it = addressBook()->begin(); it != addressBook()->end(); ++it ) {
+        if ( (*filterIt).filterAddressee( *it ) )
+          list.append( *it );
+      }
+
+    } else if ( mSelectionPage->useCategories() ) {
+      QStringList categories = mSelectionPage->categories();
+      KABC::AddressBook::ConstIterator it;
+      for ( it = addressBook()->constBegin(); it != addressBook()->constEnd(); ++it ) {
+        const QStringList tmp( (*it).categories() );
+        QStringList::ConstIterator tmpIt;
+        for ( tmpIt = tmp.constBegin(); tmpIt != tmp.constEnd(); ++tmpIt )
+          if ( categories.contains( *tmpIt ) ) {
+            list.append( *it );
+            break;
+          }
+      }
+    } else {
+      // create a string list of all entries:
+      KABC::AddressBook::iterator it;
+      for ( it = addressBook()->begin(); it != addressBook()->end(); ++it )
+        list.append( *it );
+    }
+
+    list.setReverseSorting( !mStylePage->sortAscending() );
+
+    PrintSortMode sortMode( mStylePage->sortField() );
+    list.sortByMode( &sortMode );
+  }
 
   kDebug(5720) <<"PrintingWizardImpl::print: printing"
-                << contacts.count() << "contacts.";
+                << list.count() << "contacts.";
+
   // ... print:
   enableButton( KDialog::User3, false ); // back button
   enableButton( KDialog::Cancel, false );
-  mStyle->print( contacts, mProgress );
+  mStyle->print( list, progress );
 }
 
 #include "printingwizard.moc"

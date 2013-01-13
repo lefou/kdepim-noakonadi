@@ -1,7 +1,6 @@
 /*
-    This file is part of KAddressBook.
-
-    Copyright (c) 2009 Tobias Koenig <tokoe@kde.org>
+    This file is part of KAddressbook.
+    Copyright (c) 2003 Tobias Koenig <tokoe@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -13,126 +12,143 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+    As a special exception, permission is given to link this program
+    with any edition of Qt, and distribute the resulting executable,
+    without including the source code for Qt in the source distribution.
 */
 
 #include "xxportmanager.h"
 
-#include "contactselectiondialog.h"
-
-#include <akonadi/collection.h>
-#include <akonadi/contact/addressbookselectiondialog.h>
-#include <akonadi/entitytreemodel.h>
-#include <akonadi/item.h>
-#include <akonadi/itemcreatejob.h>
+#include <kabc/addressbook.h>
+#include <kabc/resource.h>
+#include <kapplication.h>
+#include <kdebug.h>
 #include <klocale.h>
 #include <kmessagebox.h>
+#include <kservicetypetrader.h>
 
-#include <QtCore/QSignalMapper>
-#include <QtGui/QAction>
-#include <QtGui/QItemSelectionModel>
-#include <QtGui/QWidget>
+#include "core.h"
+#include "kablock.h"
+#include "undocmds.h"
+#include "xxportselectdialog.h"
 
+KUrl XXPortManager::importURL = KUrl();
+QString XXPortManager::importData = QString();
 
-XXPortManager::XXPortManager( QWidget *parent )
-  : QObject( parent ), mItemModel( 0 ), mSelectionModel( 0 ), mParentWidget( parent )
+XXPortManager::XXPortManager( KAB::Core *core, QObject *parent, const char *name )
+  : QObject( parent ), mCore( core )
 {
-  mImportMapper = new QSignalMapper( this );
-  mExportMapper = new QSignalMapper( this );
-
-  connect( mImportMapper, SIGNAL( mapped( const QString& ) ),
-           this, SLOT( slotImport( const QString& ) ) );
-  connect( mExportMapper, SIGNAL( mapped( const QString& ) ),
-           this, SLOT( slotExport( const QString& ) ) );
+  setObjectName( name );
+  loadPlugins();
 }
 
 XXPortManager::~XXPortManager()
 {
 }
 
-void XXPortManager::addImportAction( QAction *action, const QString &identifier )
+void XXPortManager::restoreSettings()
 {
-  mImportMapper->setMapping( action, identifier );
-  connect( action, SIGNAL( triggered( bool ) ), mImportMapper, SLOT( map() ) );
 }
 
-void XXPortManager::addExportAction( QAction *action, const QString &identifier )
+void XXPortManager::saveSettings()
 {
-  mExportMapper->setMapping( action, identifier );
-  connect( action, SIGNAL( triggered( bool ) ), mExportMapper, SLOT( map() ) );
 }
 
-void XXPortManager::setItemModel( QAbstractItemModel *itemModel )
+void XXPortManager::importVCard( const KUrl &url )
 {
-  mItemModel = itemModel;
+  importURL = url;
+  slotImport( "vcard", "<empty>" );
+  importURL = KUrl();
 }
 
-void XXPortManager::setSelectionModel( QItemSelectionModel *selectionModel )
+void XXPortManager::importVCardFromData( const QString &vCard )
 {
-  mSelectionModel = selectionModel;
+  importData = vCard;
+  slotImport( "vcard", "<empty>" );
+  importData = "";
 }
 
-void XXPortManager::setDefaultAddressBook( const Akonadi::Collection &addressBook )
+void XXPortManager::slotImport( const QString &identifier, const QString &data )
 {
-  mDefaultAddressBook = addressBook;
-}
-
-void XXPortManager::slotImport( const QString &identifier )
-{
-  const XXPort* xxport = mFactory.createXXPort( identifier, mParentWidget );
-  if( !xxport )
-    return;
-
-  const KABC::Addressee::List contacts = xxport->importContacts();
-
-  delete xxport;
-
-  if ( contacts.isEmpty() ) // nothing to import
-    return;
-
-  Akonadi::AddressBookSelectionDialog dlg( Akonadi::AddressBookSelectionDialog::ContactsOnly, mParentWidget );
-  dlg.setDefaultAddressBook( mDefaultAddressBook );
-  if ( !dlg.exec() )
-    return;
-
-  const Akonadi::Collection collection = dlg.selectedAddressBook();
-
-  for ( int i = 0; i < contacts.count(); ++i ) {
-    Akonadi::Item item;
-    item.setPayload<KABC::Addressee>( contacts.at( i ) );
-    item.setMimeType( KABC::Addressee::mimeType() );
-
-    Akonadi::ItemCreateJob *job = new Akonadi::ItemCreateJob( item, collection );
-    job->exec();
-  }
-}
-
-void XXPortManager::slotExport( const QString &identifier )
-{
-  if ( !mItemModel || !mSelectionModel )
-    return;
-
-  ContactSelectionDialog dlg( mItemModel, mSelectionModel, mParentWidget );
-  dlg.setMessageText( i18n( "Which contact do you want to export?" ) );
-  dlg.setDefaultAddressBook( mDefaultAddressBook );
-  if ( !dlg.exec() )
-    return;
-
-  const KABC::AddresseeList contacts = dlg.selectedContacts();
-  if ( contacts.isEmpty() ) {
-    KMessageBox::sorry( 0, i18n( "You have not selected any contacts to export." ) );
+  KAB::XXPort *obj = mXXPortObjects[ identifier ];
+  if ( !obj ) {
+    KMessageBox::error( mCore->widget(), i18n( "<qt>No import plugin available for <b>%1</b>.</qt>", identifier ) );
     return;
   }
 
-  const XXPort* xxport = mFactory.createXXPort( identifier, mParentWidget );
-  if ( !xxport )
+  KABC::Resource *resource = mCore->requestResource( mCore->widget() );
+  if ( !resource )
     return;
 
-  xxport->exportContacts( contacts );
+  KABC::Addressee::List list = obj->importContacts( data );
+  KABC::Addressee::List::Iterator it;
+  for ( it = list.begin(); it != list.end(); ++it )
+    (*it).setResource( resource );
 
-  delete xxport;
+  if ( !list.isEmpty() ) {
+    NewCommand *command = new NewCommand( mCore->addressBook(), list );
+    mCore->commandHistory()->push( command );
+    emit modified();
+  }
+}
+
+void XXPortManager::slotExport( const QString &identifier, const QString &data )
+{
+  KAB::XXPort *obj = mXXPortObjects[ identifier ];
+  if ( !obj ) {
+    KMessageBox::error( mCore->widget(), i18n( "<qt>No export plugin available for <b>%1</b>.</qt>", identifier ) );
+    return;
+  }
+
+  KABC::AddresseeList addrList;
+  XXPortSelectDialog dlg( mCore, obj->requiresSorting(), mCore->widget() );
+  if ( dlg.exec() )
+    addrList = dlg.contacts();
+  else
+    return;
+
+  if ( !obj->exportContacts( addrList, data ) )
+    KMessageBox::error( mCore->widget(), i18n( "Unable to export contacts." ) );
+}
+
+void XXPortManager::loadPlugins()
+{
+  mXXPortObjects.clear();
+
+  const KService::List plugins = KServiceTypeTrader::self()->query( "KAddressBook/XXPort",
+    QString( "[X-KDE-KAddressBook-XXPortPluginVersion] == %1" ).arg( KAB_XXPORT_PLUGIN_VERSION ) );
+  foreach ( KService::Ptr pluginService, plugins ) {
+    KPluginFactory *factory = KPluginLoader( *pluginService ).factory();
+    if ( !factory ) {
+      kDebug(5720) <<"XXPortManager::loadExtensions(): Factory creation failed";
+      continue;
+    }
+
+    KAB::XXPortFactory *xxportFactory = qobject_cast<KAB::XXPortFactory*>( factory );
+
+    if ( !xxportFactory ) {
+      kDebug(5720) <<"XXPortManager::loadExtensions(): Cast failed";
+      continue;
+    }
+
+    KAB::XXPort *obj = xxportFactory->xxportObject( mCore->addressBook(), mCore->widget() );
+    if ( obj ) {
+      if ( mCore->guiClient() )
+        mCore->guiClient()->insertChildClient( obj );
+
+      mXXPortObjects.insert( obj->identifier(), obj );
+      connect( obj, SIGNAL( exportActivated( const QString&, const QString& ) ),
+               this, SLOT( slotExport( const QString&, const QString& ) ) );
+      connect( obj, SIGNAL( importActivated( const QString&, const QString& ) ),
+               this, SLOT( slotImport( const QString&, const QString& ) ) );
+
+      obj->setKApplication( kapp );
+    }
+  }
 }
 
 #include "xxportmanager.moc"

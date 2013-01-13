@@ -1,8 +1,6 @@
 /*
     This file is part of KAddressBook.
-
     Copyright (c) 2002 Jost Schenck <jost@schenck.de>
-                  2009 Tobias Koenig <tokoe@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,31 +24,64 @@
 #ifndef RINGBINDERSTYLE_H
 #define RINGBINDERSTYLE_H
 
+#include <kabc/addressee.h>
+
 #include "printstyle.h"
+#include "ui_rbs_appearance.h"
 
 class QPrinter;
 
 namespace KABPrinting
 {
 
-class RingBinderStyleAppearanceForm;
+class RingBinderStyleAppearanceForm : public QWidget, public Ui::RingBinderStyleAppearanceForm_Base
+{
+  Q_OBJECT
+  
+  public:
+    explicit RingBinderStyleAppearanceForm( QWidget *parent );
+    ~RingBinderStyleAppearanceForm() {}
+  public Q_SLOTS:
+    void groupLetter();
+    void ungroupLetter();
+};
+
 
 class RingBinderPrintStyle : public PrintStyle
 {
+  Q_OBJECT
+
   public:
-    explicit RingBinderPrintStyle( PrintingWizard* parent );
+    explicit RingBinderPrintStyle( PrintingWizard* parent, const char* name = 0 );
     ~RingBinderPrintStyle();
 
     void print( const KABC::Addressee::List &contacts, PrintProgress* );
 
+  protected:
+    bool printEntries( const KABC::Addressee::List &contacts, QPrinter *printer,
+                       QPainter *painter, const QRect& window );
+    void fillEmpty( const QRect& window, QPrinter *printer, QPainter* painter,
+                    int top, int grpnum );
+    bool printEntry( const KABC::Addressee& contact, const QRect& window,
+                     QPainter *painter, int top, bool fake = false,
+                     QRect* brect = 0 );
+    QRect entryMetrics( const KABC::Addressee& contact, const QRect& window,
+                        QPainter* painter, int top );
+    bool printEmptyEntry( const QRect& window, QPainter* painter, int top );
+    QRect emptyEntryMetrics( const QRect& window, QPainter* painter, int top );
+    bool printPageHeader( const QString section, const QRect& window,
+                          QPainter* painter );
+    QRect pageHeaderMetrics( const QRect& window, QPainter* painter );
+
   private:
     RingBinderStyleAppearanceForm *mPageAppearance;
+    PrintProgress *mPrintProgress;
 };
 
 class RingBinderPrintStyleFactory : public PrintStyleFactory
 {
   public:
-    explicit RingBinderPrintStyleFactory( PrintingWizard *parent );
+    explicit RingBinderPrintStyleFactory( PrintingWizard *parent, const char *name = 0 );
 
     PrintStyle *create() const;
     QString description() const;
