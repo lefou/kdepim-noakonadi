@@ -39,8 +39,6 @@ class ContactsFilterModel::Private
 ContactsFilterModel::ContactsFilterModel( QObject *parent )
   : QSortFilterProxyModel( parent ), d( new Private )
 {
-  // contact names should be sorted correctly
-  setSortLocaleAware( true );
 }
 
 ContactsFilterModel::~ContactsFilterModel()
