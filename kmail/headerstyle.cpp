@@ -486,7 +486,6 @@ namespace KMail {
     QString userHTML;
 
     Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob();
-    job->setLimit( 1 );
     job->setQuery( Akonadi::ContactSearchJob::Email, KPIMUtils::firstEmailAddress( message->from() ) );
     job->exec();
     const KABC::Addressee::List addresses = job->contacts();
