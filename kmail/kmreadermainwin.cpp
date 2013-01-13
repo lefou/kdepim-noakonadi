@@ -53,7 +53,7 @@
 #include "kmmsgdict.h"
 #include "mainfolderview.h"
 
-#include <akonadi/contact/contactsearchjob.h>
+#include <kabc/stdaddressbook.h>
 #include <kpimutils/email.h>
 
 KMReaderMainWin::KMReaderMainWin( bool htmlOverride, bool htmlLoadExtOverride,
@@ -392,11 +392,8 @@ void KMReaderMainWin::slotMsgPopup( KMMessage &aMsg, const KUrl &aUrl, const QPo
         menu->addSeparator();
       }
       QString email =  KPIMUtils::firstEmailAddress( aUrl.path() );
-      Akonadi::ContactSearchJob *job = new Akonadi::ContactSearchJob( this );
-      job->setQuery( Akonadi::ContactSearchJob::Email, email );
-      job->exec();
-
-      KABC::Addressee::List addresseeList = job->contacts();
+      KABC::AddressBook *addressBook = KABC::StdAddressBook::self( true );
+      KABC::Addressee::List addresseeList = addressBook->findByEmail( email );
 
       if ( addresseeList.count() == 0 ) {
         menu->addAction( mReaderWin->addAddrBookAction() );
