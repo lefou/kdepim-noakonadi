@@ -40,9 +40,9 @@ set(libmessagelist_SRCS
     utils/themeconfigbutton.cpp
     utils/themeeditor.cpp
 
-    pane.cpp
-    storagemodel.cpp
-    widget.cpp
+#    pane.cpp
+#    storagemodel.cpp
+#    widget.cpp
 )
 
 set(libmessagelist_core_HEADERS
@@ -81,8 +81,8 @@ kde4_add_library(messagelist SHARED ${libmessagelist_SRCS})
 target_link_libraries(messagelist
     ${KDE4_KDEUI_LIBS}
     ${KDE4_KIO_LIBS}
-    ${KDEPIMLIBS_AKONADI_LIBS}
-    ${KDEPIMLIBS_AKONADI_KMIME_LIBS}
+#    ${KDEPIMLIBS_AKONADI_LIBS}
+#    ${KDEPIMLIBS_AKONADI_KMIME_LIBS}
     ${KDEPIMLIBS_KMIME_LIBS}
     messagecore
 )
