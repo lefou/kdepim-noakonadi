@@ -599,11 +599,25 @@ void KMComposeWin::readConfig( bool reload /* = false */ )
       mTransport->setCurrentTransport( transport->id() );
   }
 
+  QString identfcc;
+  {
+    /* KPIMIdentities::Identity::fcc() using akonadi, so read value from config file directly */
+    const KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      const KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+        identfcc = configGroup.readEntry( "Fcc2", QString() );
+        break;
+      }
+    }
+  }
+
   QString fccName = "";
   if ( mBtnFcc->isChecked() ) {
     fccName = GlobalSettings::self()->previousFcc();
-  } else if ( !ident.fcc().isEmpty() ) {
-    fccName = ident.fcc();
+  } else if ( !identfcc.isEmpty() ) {
+    fccName = identfcc;
   }
 
   setFcc( fccName );
@@ -1007,7 +1021,21 @@ void KMComposeWin::applyTemplate( uint uoid )
   if ( ident.isNull() )
     return;
 
-  mMsg->setTemplates( ident.templates() );
+  QString identtemplates;
+  {
+    /* KPIMIdentities::Identity::templates() using akonadi, so read value from config file directly */
+    const KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      const KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+        identtemplates = configGroup.readEntry( "Templates2", QString() );
+        break;
+      }
+    }
+  }
+
+  mMsg->setTemplates( identtemplates );
   TemplateParser::Mode mode;
   switch ( mContext ) {
     case New:
@@ -1706,11 +1734,25 @@ void KMComposeWin::setMsg( KMMessage *newMsg, bool mayAutoSign,
       mTransport->setCurrentTransport( transport->id() );
   }
 
+  QString identfcc;
+  {
+    /* KPIMIdentities::Identity::fcc() using akonadi, so read value from config file directly */
+    const KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      const KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+        identfcc = configGroup.readEntry( "Fcc2", QString() );
+        break;
+      }
+    }
+  }
+
   if ( !mBtnFcc->isChecked() ) {
     if ( !mMsg->fcc().isEmpty() ) {
       setFcc( mMsg->fcc() );
     } else {
-      setFcc( ident.fcc() );
+      setFcc( identfcc );
     }
   }
 
@@ -1810,7 +1852,7 @@ void KMComposeWin::setMsg( KMMessage *newMsg, bool mayAutoSign,
   setModified( isModified );
 
   // honor "keep reply in this folder" setting even when the identity is changed later on
-  mPreventFccOverwrite = ( !newMsg->fcc().isEmpty() && ident.fcc() != newMsg->fcc() );
+  mPreventFccOverwrite = ( !newMsg->fcc().isEmpty() && identfcc != newMsg->fcc() );
 }
 
 //-----------------------------------------------------------------------------
@@ -4053,8 +4095,24 @@ void KMComposeWin::slotIdentityChanged( uint uoid, bool initalChange )
   mDictionaryCombo->setCurrentByDictionaryName( ident.dictionary() );
   mEditor->setSpellCheckingLanguage( mDictionaryCombo->currentDictionary() );
 
+  QString identfcc, identtemplates;
+  {
+    /* KPIMIdentities::Identity::fcc() and KPIMIdentities::Identity::templates()
+       using akonadi, so read values from config file directly */
+    const KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      const KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+        identfcc = configGroup.readEntry( "Fcc2", QString() );
+        identtemplates = configGroup.readEntry( "Templates2", QString() );
+        break;
+      }
+    }
+  }
+
   if ( !mBtnFcc->isChecked() && !mPreventFccOverwrite ) {
-    setFcc( ident.fcc() );
+    setFcc( identfcc );
   }
 
   KPIMIdentities::Signature oldSig = const_cast<KPIMIdentities::Identity&>
@@ -4063,7 +4121,7 @@ void KMComposeWin::slotIdentityChanged( uint uoid, bool initalChange )
                                                ( ident ).signature();
   // if unmodified, apply new template, if one is set
   bool msgCleared = false;
-  if ( !isModified() && !( ident.templates().isEmpty() && mCustomTemplate.isEmpty() ) &&
+  if ( !isModified() && !( identtemplates.isEmpty() && mCustomTemplate.isEmpty() ) &&
        !initalChange ) {
     applyTemplate( uoid );
     msgCleared = true;

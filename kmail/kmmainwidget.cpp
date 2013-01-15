@@ -1188,7 +1188,20 @@ void KMMainWidget::slotShowNewFromTemplate()
   {
     const KPIMIdentities::Identity & ident =
       kmkernel->identityManager()->identityForUoidOrDefault( mFolder->identity() );
-    mTemplateFolder = kmkernel->folderMgr()->findIdString( ident.templates() );
+    QString identtemplates;
+    {
+      /* KPIMIdentities::Identity::templates using akonadi, so read values from config file directly */
+      const KConfig config( "emailidentities" );
+      const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+      for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+        const KConfigGroup configGroup( &config, *group );
+        if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+          identtemplates = configGroup.readEntry( "Templates2", QString() );
+          break;
+        }
+      }
+    }
+    mTemplateFolder = kmkernel->folderMgr()->findIdString( identtemplates );
   }
 
   if ( !mTemplateFolder ) mTemplateFolder = kmkernel->templatesFolder();

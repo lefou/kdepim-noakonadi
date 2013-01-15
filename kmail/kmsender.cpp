@@ -361,18 +361,33 @@ void KMSender::doSendMsg()
           kmkernel->imapFolderMgr()->findIdString( mCurrentMsg->fcc() );
       }
     }
+
+    QString idfcc;
+    {
+      /* KPIMIdentities::Identity::fcc() using akonadi, so read value from config file directly */
+      const KConfig config( "emailidentities" );
+      const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+      for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+        const KConfigGroup configGroup( &config, *group );
+        if ( configGroup.readEntry( "uoid", 0U ) == id.uoid() ) {
+          idfcc = configGroup.readEntry( "Fcc2", QString() );
+          break;
+        }
+      }
+    }
+
     // No, or no usable sentFolder, and no, or no usable imapSentFolder,
     // let's try the on in the identity
     if ( ( sentFolder == 0 || sentFolder->isReadOnly() )
       && ( imapSentFolder == 0 || imapSentFolder->isReadOnly() )
-      && !id.fcc().isEmpty() ) {
-      sentFolder = kmkernel->folderMgr()->findIdString( id.fcc() );
+      && !idfcc.isEmpty() ) {
+      sentFolder = kmkernel->folderMgr()->findIdString( idfcc );
       if ( sentFolder == 0 ) {
         // This is *NOT* supposed to be imapSentFolder!
-        sentFolder = kmkernel->dimapFolderMgr()->findIdString( id.fcc() );
+        sentFolder = kmkernel->dimapFolderMgr()->findIdString( idfcc );
       }
       if ( sentFolder == 0 ) {
-        imapSentFolder = kmkernel->imapFolderMgr()->findIdString( id.fcc() );
+        imapSentFolder = kmkernel->imapFolderMgr()->findIdString( idfcc );
       }
     }
     if (imapSentFolder &&

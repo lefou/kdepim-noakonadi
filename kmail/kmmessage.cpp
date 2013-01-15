@@ -1336,20 +1336,24 @@ void KMMessage::applyIdentity( uint id )
   else
     setHeaderField("X-KMail-Transport", ident.transport());
 
-  if (ident.fcc().isEmpty())
-    setFcc( QString() );
-  else
-    setFcc( ident.fcc() );
+  setFcc( QString() );
+  setDrafts( QString() );
+  setTemplates( QString() );
 
-  if (ident.drafts().isEmpty())
-    setDrafts( QString() );
-  else
-    setDrafts( ident.drafts() );
+  /* KPIMIdentities::Identity::fcc(), KPIMIdentities::Identity::drafts() and KPIMIdentities::Identity::templates()
+     using akonadi, so read values from config file directly */
+  const KConfig config( "emailidentities" );
+  const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+  for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+    const KConfigGroup configGroup( &config, *group );
+    if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+      setFcc( configGroup.readEntry( "Fcc2", QString() ) );
+      setDrafts( configGroup.readEntry( "Drafts2", QString() ) );
+      setTemplates( configGroup.readEntry( "Templates2", QString() ) );
+      break;
+    }
+  }
 
-  if (ident.templates().isEmpty())
-    setTemplates( QString() );
-  else
-    setTemplates( ident.templates() );
 }
 
 //-----------------------------------------------------------------------------

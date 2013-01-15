@@ -656,8 +656,25 @@ namespace KMail {
       mTransportCombo->setCurrentTransport( transport->id() );
     mDictionaryCombo->setCurrentByDictionaryName( ident.dictionary() );
 
-    if ( ident.fcc().isEmpty() ||
-         !checkFolderExists( ident.fcc(),
+    QString identfcc, identdrafts, identtemplates;
+    {
+      /* KPIMIdentities::Identity::fcc(), KPIMIdentities::Identity::drafts() and KPIMIdentities::Identity::templates()
+         using akonadi, so read values from config file directly */
+      const KConfig config( "emailidentities" );
+      const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+      for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+        const KConfigGroup configGroup( &config, *group );
+        if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+          identfcc = configGroup.readEntry( "Fcc2", QString() );
+          identdrafts = configGroup.readEntry( "Drafts2", QString() );
+          identtemplates = configGroup.readEntry( "Templates2", QString() );
+          break;
+        }
+      }
+    }
+
+    if ( identfcc.isEmpty() ||
+         !checkFolderExists( identfcc,
                              i18n("The custom sent-mail folder for identity "
                                   "\"%1\" does not exist (anymore); "
                                   "therefore, the default sent-mail folder "
@@ -665,10 +682,10 @@ namespace KMail {
                                ident.identityName() ) ) )
       mFccCombo->setFolder( kmkernel->sentFolder() );
     else
-      mFccCombo->setFolder( ident.fcc() );
+      mFccCombo->setFolder( identfcc );
 
-    if ( ident.drafts().isEmpty() ||
-         !checkFolderExists( ident.drafts(),
+    if ( identdrafts.isEmpty() ||
+         !checkFolderExists( identdrafts,
                              i18n("The custom drafts folder for identity "
                                   "\"%1\" does not exist (anymore); "
                                   "therefore, the default drafts folder "
@@ -676,17 +693,17 @@ namespace KMail {
                                ident.identityName() ) ) )
       mDraftsCombo->setFolder( kmkernel->draftsFolder() );
     else
-      mDraftsCombo->setFolder( ident.drafts() );
+      mDraftsCombo->setFolder( identdrafts );
 
-    if ( ident.templates().isEmpty() ||
-         !checkFolderExists( ident.templates(),
+    if ( identtemplates.isEmpty() ||
+         !checkFolderExists( identtemplates,
                              i18n("The custom templates folder for identity "
                                   "\"%1\" does not exist (anymore); "
                                   "therefore, the default templates folder "
                                   "will be used.", ident.identityName()) ) )
       mTemplatesCombo->setFolder( kmkernel->templatesFolder() );
     else
-      mTemplatesCombo->setFolder( ident.templates() );
+      mTemplatesCombo->setFolder( identtemplates );
 
     // "Templates" tab:
     uint identity = ident.uoid();
@@ -721,12 +738,20 @@ namespace KMail {
     ident.setTransport( ( mTransportCheck->isChecked() ) ?
                           mTransportCombo->currentText() : QString() );
     ident.setDictionary( mDictionaryCombo->currentDictionaryName() );
-    ident.setFcc( mFccCombo->folder() ?
-                  mFccCombo->folder()->idString() : QString() );
-    ident.setDrafts( mDraftsCombo->folder() ?
-                     mDraftsCombo->folder()->idString() : QString() );
-    ident.setTemplates( mTemplatesCombo->folder() ?
-                     mTemplatesCombo->folder()->idString() : QString() );
+
+    /* KPIMIdentities::Identity::setFcc(), KPIMIdentities::Identity::setDrafts() and KPIMIdentities::Identity::setTemplates()
+       using akonadi, so write values to config file directly */
+    KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == ident.uoid() ) {
+        configGroup.writeEntry( "Fcc2", mFccCombo->folder() ? mFccCombo->folder()->idString() : QString() );
+        configGroup.writeEntry( "Drafts2", mDraftsCombo->folder() ? mDraftsCombo->folder()->idString() : QString() );
+        configGroup.writeEntry( "Templates2", mTemplatesCombo->folder() ? mTemplatesCombo->folder()->idString() : QString() );
+        break;
+      }
+    }
 
     // "Templates" tab:
     uint identity = ident.uoid();

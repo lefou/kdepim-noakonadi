@@ -750,6 +750,23 @@ void KMFolder::setUserWhoField( const QString& whoField, bool writeConfig )
     const KPIMIdentities::Identity & identity =
       kmkernel->identityManager()->identityForUoidOrDefault( mIdentity );
 
+    QString identityfcc, identitydrafts, identitytemplates;
+    {
+      /* KPIMIdentities::Identity::fcc(), KPIMIdentities::Identity::drafts() and KPIMIdentities::Identity::templates()
+         using akonadi, so read values from config file directly */
+      const KConfig config( "emailidentities" );
+      const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+      for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+        const KConfigGroup configGroup( &config, *group );
+        if ( configGroup.readEntry( "uoid", 0U ) == identity.uoid() ) {
+          identityfcc = configGroup.readEntry( "Fcc2", QString() );
+          identitydrafts = configGroup.readEntry( "Drafts2", QString() );
+          identitytemplates = configGroup.readEntry( "Templates2", QString() );
+          break;
+        }
+      }
+    }
+
     if ( isSystemFolder() && folderType() != KMFolderTypeImap ) {
       // local system folders
       if ( this == kmkernel->inboxFolder() ||
@@ -760,9 +777,9 @@ void KMFolder::setUserWhoField( const QString& whoField, bool writeConfig )
            this == kmkernel->templatesFolder() ||
            this == kmkernel->draftsFolder() )
         mWhoField = "To";
-    } else if ( identity.drafts() == idString() ||
-                identity.templates() == idString() ||
-                identity.fcc() == idString() )
+    } else if ( identitydrafts == idString() ||
+                identitytemplates == idString() ||
+                identityfcc == idString() )
       // drafts, templates or sent of the identity
       mWhoField = "To";
     else

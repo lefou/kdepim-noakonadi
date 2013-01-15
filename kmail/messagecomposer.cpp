@@ -490,16 +490,32 @@ void MessageComposer::readFromComposeWin()
 
   const KPIMIdentities::Identity &id = mComposeWin->identity();
 
+  QString idfcc, iddrafts;
+  {
+    /* KPIMIdentities::Identity::fcc() and KPIMIdentities::Identity::drafts()
+       using akonadi, so read values from config file directly */
+    const KConfig config( "emailidentities" );
+    const QStringList identities = config.groupList().filter( QRegExp( "^Identity #\\d+$" ) );
+    for ( QStringList::const_iterator group = identities.constBegin(); group != identities.constEnd(); ++group ) {
+      const KConfigGroup configGroup( &config, *group );
+      if ( configGroup.readEntry( "uoid", 0U ) == id.uoid() ) {
+        idfcc = configGroup.readEntry( "Fcc2", QString() );
+        iddrafts = configGroup.readEntry( "Drafts2", QString() );
+        break;
+      }
+    }
+  }
+
   KMFolder *f = mComposeWin->mFcc->getFolder();
   assert( f != 0 );
-  if ( f->idString() == id.fcc() ) {
+  if ( f->idString() == idfcc ) {
     mReferenceMessage->removeHeaderField( "X-KMail-Fcc" );
   } else {
     mReferenceMessage->setFcc( f->idString() );
   }
 
   // set the correct drafts folder
-  mReferenceMessage->setDrafts( id.drafts() );
+  mReferenceMessage->setDrafts( iddrafts );
 
   if ( id.isDefault() ) {
     mReferenceMessage->removeHeaderField( "X-KMail-Identity" );
