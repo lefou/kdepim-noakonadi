@@ -28,6 +28,7 @@ Depends: ${misc:Depends}, akregator, kaddressbook (>= ${source:Version}),
  konsolekalendar (>= ${source:Version}), kontact (>= ${source:Version}), korganizer (>= ${source:Version}),
  ktimetracker, kdepim-strigi-plugins (>= ${source:Version}), kjots (>= ${source:Version}),
  blogilo, kdepim-runtime
+Recommends: kleopatra
 Description: Personal Information Management apps from the official KDE release
  KDE (the K Desktop Environment) is a powerful Open Source graphical
  desktop environment for Unix workstations. It combines ease of use,
