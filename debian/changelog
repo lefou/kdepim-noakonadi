@@ -1,3 +1,9 @@
+kdepim (5:4.4.11.3-0ubuntu1) unstable; urgency=low
+
+  * When activating KMail window from systray, do not switch back to previous activated desktop
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Mon, 22 Jul 2013 17:15:26 +0200
+
 kdepim (5:4.4.11.2-0ubuntu1) unstable; urgency=low
 
   * Use patches from branch KDE/4.4
