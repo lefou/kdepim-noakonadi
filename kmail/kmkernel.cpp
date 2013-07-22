@@ -2219,10 +2219,12 @@ void KMKernel::showMainWin()
   if ( cur.valid() ) {
     mDesktopOfMainWin = cur.desktop();
   }
+#if 0
   // switch to appropriate desktop
   if ( mDesktopOfMainWin != NET::OnAllDesktops ) {
     KWindowSystem::setCurrentDesktop( mDesktopOfMainWin );
   }
+#endif
   if ( !mMainWinVisible ) {
     if ( mDesktopOfMainWin == NET::OnAllDesktops ) {
       KWindowSystem::setOnAllDesktops( mainWin->winId(), true );
