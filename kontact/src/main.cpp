@@ -58,7 +58,7 @@ KUniqueApplication
 {
   Q_OBJECT
   public:
-    KontactApp() : mMainWindow( 0 ), mSessionRestored( false )
+    KontactApp() : mMainWindow( 0 ), mSessionRestored( false ), mSessionRestoring( false )
     {
       KIconLoader::global()->addAppDir( "kdepim" );
     }
@@ -76,6 +76,10 @@ KUniqueApplication
     {
       mSessionRestored = restored;
     }
+    void setSessionRestoring( bool restoring )
+    {
+      mSessionRestoring = restoring;
+    }
 
   public Q_SLOTS:
     void loadCommandLineOptionsForNewInstance();
@@ -83,6 +87,7 @@ KUniqueApplication
   private:
     MainWindow *mMainWindow;
     bool mSessionRestored;
+    bool mSessionRestoring;
 };
 
 static void listPlugins()
@@ -121,6 +126,10 @@ void KontactApp::loadCommandLineOptionsForNewInstance()
 
 int KontactApp::newInstance()
 {
+  if ( mSessionRestoring ) {
+    return 0;
+  }
+
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
   QString moduleName;
   if ( Prefs::self()->forceStartupPlugin() ) {
@@ -207,9 +216,11 @@ int main( int argc, char **argv )
   if ( app.restoringSession() ) {
      // There can only be one main window
     if ( KMainWindow::canBeRestored( 1 ) ) {
+      app.setSessionRestoring( true );
       MainWindow *mainWindow = new MainWindow();
       app.setMainWindow( mainWindow );
       app.setSessionRestored( true );
+      app.setSessionRestoring( false );
       mainWindow->show();
       mainWindow->restore( 1 );
     }
