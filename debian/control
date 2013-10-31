@@ -96,22 +96,22 @@ Description: debugging symbols for kdepim
 # This package is part of KDE, and a component of the KDE PIM module.
 # See the 'kde' and 'kdepim' packages for more information
 
-#Package: akregator
-#Section: web
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends}
-#Breaks: kontact (<< 4:4.1.80)
-#Replaces: kontact (<< 4:4.1.80)
-#Homepage: http://akregator.kde.org/
-#Description: RSS/Atom feed aggregator 
-# Akregator is a news feed reader. It enables you to follow  
-# news sites, blogs and other RSS/Atom-enabled websites without the need to 
-# manually check for updates using a web browser. Akregator is designed to be 
-# both easy to use and to be powerful enough to read hundreds of news sources 
-# conveniently. It comes with Konqueror integration for adding news feeds and 
-# with an internal browser for easy news reading.
-# .
-# This package is part of the KDE PIM module.
+Package: akregator
+Section: web
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Breaks: kontact (<< 4:4.1.80)
+Replaces: kontact (<< 4:4.1.80)
+Homepage: http://akregator.kde.org/
+Description: RSS/Atom feed aggregator 
+ Akregator is a news feed reader. It enables you to follow  
+ news sites, blogs and other RSS/Atom-enabled websites without the need to 
+ manually check for updates using a web browser. Akregator is designed to be 
+ both easy to use and to be powerful enough to read hundreds of news sources 
+ conveniently. It comes with Konqueror integration for adding news feeds and 
+ with an internal browser for easy news reading.
+ .
+ This package is part of the KDE PIM module.
 
 Package: libkabcommon4
 Section: libs
@@ -215,15 +215,15 @@ Description: KDE server configuration wizards
 # .
 # This package is part of KDE, and a component of the KDE PIM module.
 
-#Package: kleopatra
-#Section: net
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends},
-# gnupg-agent, gnupg2, gpgsm, dirmngr, pinentry-qt4
-#Description: certificate Manager
-# Kleopatra is a tool for managing X.509 certificates and pgp keys.
-# .
-# This package is part of the KDE PIM module.
+Package: kleopatra
+Section: net
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends},
+ gnupg-agent, gnupg2, gpgsm, dirmngr, pinentry-qt4
+Description: certificate Manager
+ Kleopatra is a tool for managing X.509 certificates and pgp keys.
+ .
+ This package is part of the KDE PIM module.
 
 Package: kmail
 Section: mail
@@ -274,19 +274,19 @@ Description: graphical news reader
  .
  This package is part of the KDE PIM module.
 
-#Package: knotes
-#Section: kde
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends}
-#Suggests: kdepim-kresources
-#Breaks: kontact (<< 4:4.1.80)
-#Replaces: kontact (<< 4:4.1.80)
-#Description: sticky notes application
-# KNotes is a program that lets you write sticky notes. The notes are saved
-# automatically when you exit the program, and they display when you open the
-# program.  The program supports printing and mailing your notes.
-# .
-# This package is part of the KDE PIM module.
+Package: knotes
+Section: kde
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Suggests: kdepim-kresources
+Breaks: kontact (<< 4:4.1.80)
+Replaces: kontact (<< 4:4.1.80)
+Description: sticky notes application
+ KNotes is a program that lets you write sticky notes. The notes are saved
+ automatically when you exit the program, and they display when you open the
+ program.  The program supports printing and mailing your notes.
+ .
+ This package is part of the KDE PIM module.
 
 Package: konsolekalendar
 Section: kde
@@ -451,33 +451,33 @@ Description: note-taking utility
  .
  This package is part of the KDE PIM module.
 
-#Package: blogilo
-#Section: web
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-sql-sqlite
-#Description: graphical blogging client 
-# Blogilo is a Free/Open Source Blogging client, focused on simplicity and
-# usability. Currently featured:
-# .
-#  * A full featured WYSIWYG editor and an HTML editor.
-#  * Previewing your post with your blog style, like when you are visiting it at
-#    your blog.
-#  * Support for Blogger1.0, MetaWeblog, MovableType (Wordpress supports all of
-#    these) and Google GData (used on Blogspot.com blogs) APIs.
-#  * Support for creating/modifying/deleting posts.
-#  * Support for creating drafts and scheduled posts.
-#  * Support for uploading media files to your blog (only on supported APIs e.g.
-#    MetaWeblog and MovableType).
-#  * Support for fetching your recent blog entries.
-#  * Support for adding images to post from your system. It will upload them on
-#    Submitting post to blog (only on supported APIs e.g. MetaWeblog and
-#    MovableType).
-#  * Support for saving local entries before publishing.
-#  * Saving your writing copy to prevent data loss, at configurable intervals.
-#  * Internal auto spell checker. (KDE spell checker used so most of languages
-#    are supported.)
-# .
-# This package is part of the KDE PIM module.
+Package: blogilo
+Section: web
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-sql-sqlite
+Description: graphical blogging client 
+ Blogilo is a Free/Open Source Blogging client, focused on simplicity and
+ usability. Currently featured:
+ .
+  * A full featured WYSIWYG editor and an HTML editor.
+  * Previewing your post with your blog style, like when you are visiting it at
+    your blog.
+  * Support for Blogger1.0, MetaWeblog, MovableType (Wordpress supports all of
+    these) and Google GData (used on Blogspot.com blogs) APIs.
+  * Support for creating/modifying/deleting posts.
+  * Support for creating drafts and scheduled posts.
+  * Support for uploading media files to your blog (only on supported APIs e.g.
+    MetaWeblog and MovableType).
+  * Support for fetching your recent blog entries.
+  * Support for adding images to post from your system. It will upload them on
+    Submitting post to blog (only on supported APIs e.g. MetaWeblog and
+    MovableType).
+  * Support for saving local entries before publishing.
+  * Saving your writing copy to prevent data loss, at configurable intervals.
+  * Internal auto spell checker. (KDE spell checker used so most of languages
+    are supported.)
+ .
+ This package is part of the KDE PIM module.
 
 #Package: akonadiconsole
 #Section: utils
