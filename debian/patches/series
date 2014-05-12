@@ -1,6 +1,3 @@
-0001-Rename-library-libkleo-to-libkleo_old.patch
-0002-Rename-library-kdepim-to-kdepim_old.patch
-0003-Rename-library-kcal_resourceremote-to-kcal_resourcer.patch
 #debianize_akregator_default.diff
 kubuntu_debianize_akregator_default.diff
-#kubuntu_install_headers.diff
+kubuntu_install_headers.diff

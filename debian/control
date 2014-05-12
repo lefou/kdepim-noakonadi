@@ -24,10 +24,10 @@ Package: kdepim
 Architecture: all
 Depends: ${misc:Depends}, akregator, kaddressbook (>= ${source:Version}),
  kalarm (>= ${source:Version}), kdepim-kresources (>= ${source:Version}), kdepim-wizards (>= ${source:Version}),
- kmail (>= ${source:Version}), knode (>= ${source:Version}), knotes,
+ kmail (>= ${source:Version}), knode (>= ${source:Version}), knotes (>= ${source:Version}),
  konsolekalendar (>= ${source:Version}), kontact (>= ${source:Version}), korganizer (>= ${source:Version}),
- ktimetracker, kdepim-strigi-plugins (>= ${source:Version}), kjots (>= ${source:Version}),
- blogilo, kdepim-runtime
+ ktimetracker (>= ${source:Version}), kdepim-strigi-plugins (>= ${source:Version}), kjots (>= ${source:Version}),
+ blogilo (>= ${source:Version}), kdepim-runtime
 Recommends: kleopatra
 Description: Personal Information Management apps from the official KDE release
  KDE (the K Desktop Environment) is a powerful Open Source graphical
@@ -50,13 +50,17 @@ Depends: ${misc:Depends}, kdepimlibs-dbg,
  kdepim-strigi-plugins (= ${binary:Version}) |
  kdepim-wizards (= ${binary:Version}) |
  kjots (= ${binary:Version}) |
+ kleopatra (= ${binary:Version}) |
  kmail (= ${binary:Version}) |
  knode (= ${binary:Version}) |
+ knotes (= ${binary:Version}) |
  konsolekalendar (= ${binary:Version}) |
  kontact (= ${binary:Version}) |
  korganizer (= ${binary:Version}) |
- libkleo4-old (= ${binary:Version}) |
- libkdepim4-old (= ${binary:Version}) |
+ ktimetracker (= ${binary:Version}) |
+ blogilo (= ${binary:Version}) |
+ libkdepim4 (= ${binary:Version}) |
+ libkleo4 (= ${binary:Version}) |
  libkpgp4 (= ${binary:Version}) |
  libksieve4 (= ${binary:Version}) |
  libmaildir4 (= ${binary:Version}) |
@@ -72,29 +76,29 @@ Description: debugging symbols for kdepim
  They will automatically be used by gdb for debugging kdepim-related
  issues.
 
-#Package: kdepim-dev
-#Architecture: any
-#Depends: kdepim-runtime, akregator (>= ${binary:Version}),
-# kaddressbook (>= ${binary:Version}), kalarm (>= ${binary:Version}),
-# kdepim-kresources (>= ${binary:Version}), kjots (>= ${binary:Version}),
-# kdepim-wizards (>= ${binary:Version}), kmail (>= ${binary:Version}),
-# knode (>= ${binary:Version}), knotes (>= ${binary:Version}),
-# konsolekalendar (>= ${binary:Version}),
-# kontact (>= ${binary:Version}), korganizer (>= ${binary:Version}),
-# ktimetracker (>= ${binary:Version}),
-# kdepim-strigi-plugins (>= ${binary:Version}),
-# libkdepim4 (>= ${binary:Version}), kdepimlibs5-dev (>= 4:4.3.80),
-# libphonon-dev (>= 4:4.6.0really4.3.80),
-# libgpgme11-dev, libboost1.42-dev, libboost-graph1.42-dev, libsasl2-dev, libxss-dev,
-# libqca2-dev (>= 2.0.0), libpisock-dev, libassuan-dev, libstreams-dev,
-# libstreamanalyzer-dev, libsearchclient-dev, libstrigihtmlgui-dev,
-# libstrigiqtdbusclient-dev, zlib1g-dev, libakonadi-dev (>= 1.2.80),
-# ${shlibs:Depends}
-#Conflicts: kmail (<= 4:4.2.1)
-#Replaces: kmail (<= 4:4.2.1)
-#Description: Contains development files needed to compile kdepim applications.
-# This package is part of KDE, and a component of the KDE PIM module.
-# See the 'kde' and 'kdepim' packages for more information
+Package: kdepim-dev
+Architecture: any
+Depends: kdepim-runtime, akregator (>= ${binary:Version}),
+ kaddressbook (>= ${binary:Version}), kalarm (>= ${binary:Version}),
+ kdepim-kresources (>= ${binary:Version}), kjots (>= ${binary:Version}),
+ kdepim-wizards (>= ${binary:Version}), kmail (>= ${binary:Version}),
+ knode (>= ${binary:Version}), knotes (>= ${binary:Version}),
+ konsolekalendar (>= ${binary:Version}),
+ kontact (>= ${binary:Version}), korganizer (>= ${binary:Version}),
+ ktimetracker (>= ${binary:Version}),
+ kdepim-strigi-plugins (>= ${binary:Version}),
+ libkdepim4 (>= ${binary:Version}), kdepimlibs5-dev (>= 4:4.3.80),
+ libphonon-dev (>= 4:4.6.0really4.3.80),
+ libgpgme11-dev, libboost1.42-dev, libboost-graph1.42-dev, libsasl2-dev, libxss-dev,
+ libqca2-dev (>= 2.0.0), libpisock-dev, libassuan-dev, libstreams-dev,
+ libstreamanalyzer-dev, libsearchclient-dev, libstrigihtmlgui-dev,
+ libstrigiqtdbusclient-dev, zlib1g-dev, libakonadi-dev (>= 1.2.80),
+ ${shlibs:Depends}
+Conflicts: kmail (<= 4:4.2.1)
+Replaces: kmail (<= 4:4.2.1)
+Description: Contains development files needed to compile kdepim applications.
+ This package is part of KDE, and a component of the KDE PIM module.
+ See the 'kde' and 'kdepim' packages for more information
 
 Package: akregator
 Section: web
@@ -335,19 +339,19 @@ Description: calendar and personal organizer
  .
  This package is part of the KDE PIM module.
 
-#Package: ktimetracker
-#Section: utils
-#Architecture: any
-#Depends: ${shlibs:Depends}, ${misc:Depends}
-#Breaks: karm, kontact (<< 4:4.3.80)
-#Replaces: karm, kontact (<< 4:4.3.80)
-#Description: time tracker tool
-# KTimetracker is a time tracker for busy people who need to keep track
-# of the amount of time they spend on various tasks.
-# .
-# This package is part of the KDE PIM module.
+Package: ktimetracker
+Section: utils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Breaks: karm, kontact (<< 4:4.3.80)
+Replaces: karm, kontact (<< 4:4.3.80)
+Description: time tracker tool
+ KTimetracker is a time tracker for busy people who need to keep track
+ of the amount of time they spend on various tasks.
+ .
+ This package is part of the KDE PIM module.
 
-Package: libkdepim4-old
+Package: libkdepim4
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
@@ -358,7 +362,7 @@ Description: KDE PIM library
  .
  This package is part of the KDE PIM module.
 
-Package: libkleo4-old
+Package: libkleo4
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
