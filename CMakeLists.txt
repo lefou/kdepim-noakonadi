@@ -183,14 +183,14 @@ set(libkdgantt1_SRCS
   add_subdirectory(libkpgp)
   add_subdirectory(libksieve)
   add_subdirectory(mimelib)
-#  add_subdirectory(kdgantt1)
+  add_subdirectory(kdgantt1)
   add_subdirectory(icons)
   add_subdirectory(messagecore)
   add_subdirectory(messagelist)
 
   if(QGPGME_FOUND)
     if (Boost_TOPOLOGICAL_SORT_DIR)
-#      macro_optional_add_subdirectory(kleopatra)
+      macro_optional_add_subdirectory(kleopatra)
     endif(Boost_TOPOLOGICAL_SORT_DIR)
     macro_optional_add_subdirectory(wizards)
     # The following components depend on QGpgME.
@@ -220,13 +220,13 @@ set(libkdgantt1_SRCS
     macro_optional_add_subdirectory(knode)
   endif(KDEPIM_BUILD_EVERYTHING)
 
-#  macro_optional_add_subdirectory(akregator)
+  macro_optional_add_subdirectory(akregator)
 #  macro_optional_add_subdirectory(akonadiconsole)
-#  macro_optional_add_subdirectory(blogilo)
+  macro_optional_add_subdirectory(blogilo)
   macro_optional_add_subdirectory(console)
   macro_optional_add_subdirectory(kalarm)
   macro_optional_add_subdirectory(kjots)
-#  macro_optional_add_subdirectory(knotes)
+  macro_optional_add_subdirectory(knotes)
   macro_optional_add_subdirectory(strigi-analyzer)
     
   if(EXISTS ${CMAKE_SOURCE_DIR}/runtime)
@@ -239,7 +239,7 @@ set(libkdgantt1_SRCS
 
   macro_optional_add_subdirectory(kaddressbook)
   if(Q_WS_X11)
-#    macro_optional_add_subdirectory(ktimetracker)
+    macro_optional_add_subdirectory(ktimetracker)
   endif(Q_WS_X11)
 
   macro_optional_add_subdirectory(kontact) # must be the last one.
