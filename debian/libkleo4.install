@@ -1,5 +1,5 @@
-usr/lib/libkleo_old.so.4
-usr/lib/libkleo_old.so.4.*
+usr/lib/libkleo.so.4
+usr/lib/libkleo.so.4.*
 #usr/share/kde4/apps/libkleopatra/pics/chiasmus_chi.png
 #usr/share/kde4/apps/libkleopatra/pics/key.png
 #usr/share/kde4/apps/libkleopatra/pics/key_bad.png

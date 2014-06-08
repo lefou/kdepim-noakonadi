@@ -89,10 +89,10 @@ Depends: kdepim-runtime, akregator (>= ${binary:Version}),
  kdepim-strigi-plugins (>= ${binary:Version}),
  libkdepim4 (>= ${binary:Version}), kdepimlibs5-dev (>= 4:4.3.80),
  libphonon-dev (>= 4:4.6.0really4.3.80),
- libgpgme11-dev, libboost1.42-dev, libboost-graph1.42-dev, libsasl2-dev, libxss-dev,
+ libgpgme11-dev, libboost-dev, libboost-graph-dev, libsasl2-dev, libxss-dev,
  libqca2-dev (>= 2.0.0), libpisock-dev, libassuan-dev, libstreams-dev,
  libstreamanalyzer-dev, libsearchclient-dev, libstrigihtmlgui-dev,
- libstrigiqtdbusclient-dev, zlib1g-dev, libakonadi-dev (>= 1.2.80),
+ libstrigiqtdbusclient-dev, zlib1g-dev,
  ${shlibs:Depends}
 Conflicts: kmail (<= 4:4.2.1)
 Replaces: kmail (<= 4:4.2.1)
@@ -355,8 +355,8 @@ Package: libkdepim4
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Breaks: kmail (<< 4:4.1.80), kdepim-runtime (<< 4:4.4.60)
-Replaces: kmail (<< 4:4.1.80), kdepim-runtime (<< 4:4.4.60)
+Breaks: kmail (<< 4:4.1.80), kdepim-runtime (<< 4:4.4.60), libkdepim4-old
+Replaces: kmail (<< 4:4.1.80), kdepim-runtime (<< 4:4.4.60), libkdepim4-old
 Description: KDE PIM library
  This is the runtime package for programs that use the libkdepim library.
  .
@@ -367,6 +367,8 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: kde-l10n
+Breaks: libkleo4-old
+Replaces: libkleo4-old
 Description: certificate based crypto library
  This package contains libkleo, a library for Kleopatra and other parts
  of KDE using certificate-based crypto.

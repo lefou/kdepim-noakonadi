@@ -6,8 +6,8 @@
 #usr/lib/libakonadi_next.so.4.*
 #usr/lib/libkcal_resourceremote.so.4
 #usr/lib/libkcal_resourceremote.so.4.*
-usr/lib/libkdepim_old.so.4
-usr/lib/libkdepim_old.so.4.*
+usr/lib/libkdepim.so.4
+usr/lib/libkdepim.so.4.*
 #usr/share/icons/oxygen/16x16/mimetypes/x-mail-distribution-list.png
 #usr/share/icons/oxygen/22x22/actions/button_fewer.png
 #usr/share/icons/oxygen/22x22/actions/button_more.png
