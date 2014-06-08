@@ -1,3 +1,9 @@
+kdepim (5:4.4.11.5-0ubuntu2) unstable; urgency=low
+
+  * Fix dependences for packages kdepim-kresources and libkpgp4
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 08 Jun 2014 12:07:23 +0200
+
 kdepim (5:4.4.11.5-0ubuntu1) unstable; urgency=low
 
   * Fix --editor-only and --uid params for kaddressbook
