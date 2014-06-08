@@ -169,8 +169,8 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: korganizer
 Suggests: knotes
-Breaks: korganizer (<< 4:4.2.85)
-Replaces: korganizer (<< 4:4.2.85)
+Breaks: korganizer (<< 4:4.2.85), libkdepim4 (<< 5:4.4)
+Replaces: korganizer (<< 4:4.2.85), libkdepim4 (<< 5:4.4)
 Description: KDE PIM resource plugins
  This package adds more resource plugins for KDE PIM applications such as
  blogging, tracking feature plans etc.
@@ -379,6 +379,8 @@ Package: libkpgp4
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Breaks: knode (<< 5:4.4)
+Replaces: knode (<< 5:4.4)
 Description: gpg based crypto library
  This package contains libkpgp4, a gnupg-library for KMail and other parts of
  kdepim using gpg-based crypto.
