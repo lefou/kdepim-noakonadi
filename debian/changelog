@@ -1,3 +1,9 @@
+kdepim (5:4.4.11.6-0ubuntu1) unstable; urgency=low
+
+  * Backport patches for optimization & crash fixed
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sun, 01 Mar 2015 14:37:50 +0100
+
 kdepim (5:4.4.11.5-0ubuntu2) unstable; urgency=low
 
   * Fix dependences for packages kdepim-kresources and libkpgp4
