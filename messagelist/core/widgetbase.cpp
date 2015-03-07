@@ -372,7 +372,7 @@ void Widget::setStorageModel( StorageModel * storageModel, PreSelectionMode preS
   StorageModel * oldModel = d->mStorageModel;
 
   d->mStorageModel = storageModel;
-  d->mLastStorageModelId = storageModel->id();
+  d->mLastStorageModelId = storageModel ? storageModel->id() : 0;
 
   d->mView->setStorageModel( d->mStorageModel, preSelectionMode );
 
