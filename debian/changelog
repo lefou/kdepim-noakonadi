@@ -1,3 +1,9 @@
+kdepim (5:4.4.11.7-0ubuntu1) unstable; urgency=low
+
+  * Fix crashing when storageModel is NULL
+
+ -- Pali Rohár <pali.rohar@gmail.com>  Sat, 07 Mar 2015 14:40:39 +0100
+
 kdepim (5:4.4.11.6-0ubuntu1) unstable; urgency=low
 
   * Backport patches for optimization & crash fixed
