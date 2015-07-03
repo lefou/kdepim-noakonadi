@@ -1,6 +1,10 @@
 /* Define to 1 if you have a recent enough libassuan */
 #cmakedefine HAVE_USABLE_ASSUAN 1
 
+/* Define to 1 if you have libassuan v2 */
+#cmakedefine HAVE_ASSUAN2 1
+
+#ifndef HAVE_ASSUAN2
 /* Define to 1 if your libassuan has the assuan_fd_t type  */
 #cmakedefine HAVE_ASSUAN_FD_T 1
 
@@ -13,6 +17,7 @@
 /* Define to 1 if your libassuan has the assuan_sock_get_nonce function */
 #cmakedefine HAVE_ASSUAN_SOCK_GET_NONCE 1
 
+#endif
 /* Define to 1 if you build libkleopatraclient */
 #cmakedefine HAVE_KLEOPATRACLIENT_LIBRARY 1
 
