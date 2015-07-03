@@ -22,7 +22,7 @@ if(KDEPIM_BUILD_EVERYTHING)
 
   kde4_add_executable(groupwarewizard ${groupwarewizard_SRCS})
 
-  target_link_libraries(groupwarewizard ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS}
+  target_link_libraries(groupwarewizard ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kio kdeui kpimutils
   kabcgroupwise kcalgroupwise
   kcal_slox kabc_slox
   kabckolab knoteskolab
@@ -44,7 +44,8 @@ if(KDEPIM_BUILD_EVERYTHING)
 
   kde4_add_executable(groupwisewizard ${groupwisewizard_SRCS})
 
-  target_link_libraries(groupwisewizard ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KIDENTITIES_LIBS} kabcgroupwise kcalgroupwise ${KDEPIMLIBS_KCAL_LIBS} kdepim )
+  target_link_libraries(groupwisewizard ${KDEPIMLIBS_KPIMIDENTITIES_LIBS} ${QT_QTGUI_LIBRARY}
+    ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_KIDENTITIES_LIBS} kabcgroupwise kcalgroupwise ${KDEPIMLIBS_KCAL_LIBS} kdepim kpimutils kio )
 
   install(TARGETS groupwisewizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
 
@@ -60,7 +61,8 @@ if(KDEPIM_BUILD_EVERYTHING)
 
   kde4_add_executable(sloxwizard ${sloxwizard_SRCS})
 
-  target_link_libraries(sloxwizard ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kcal_slox kabc_slox ${KDEPIMLIBS_KCAL_LIBS} ${KDEPIMLIBS_KABC_LIBS} kdepim )
+  target_link_libraries(sloxwizard ${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDECORE_LIBS} kcal_slox kabc_slox ${KDEPIMLIBS_KCAL_LIBS}
+    ${KDEPIMLIBS_KABC_LIBS} kdepim kio )
 
   install(TARGETS sloxwizard  ${INSTALL_TARGETS_DEFAULT_ARGS})
 
@@ -83,6 +85,7 @@ kde4_add_app_icon(kolabwizard_SRCS "${KDE4_ICON_DIR}/oxygen/*/actions/tools-wiza
 kde4_add_executable(kolabwizard ${kolabwizard_SRCS})
 
 target_link_libraries(kolabwizard
+  ${QT_QTGUI_LIBRARY} kio
   ${QT_QT3SUPPORT_LIBRARY}
   ${KDEPIMLIBS_KCAL_LIBS}
   ${KDEPIMLIBS_KABC_LIBS}
