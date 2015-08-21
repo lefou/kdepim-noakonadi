@@ -1,21 +1,30 @@
 # assuan configure checks
 include(CheckFunctionExists)
 
-macro_optional_find_package(Assuan)
+macro_optional_find_package(Assuan2)
+if ( ASSUAN2_FOUND )
+  set ( ASSUAN_SUFFIX "2" )
+else ( ASSUAN2_FOUND )
+  macro_optional_find_package(Assuan)
+  set ( ASSUAN_SUFFIX )
+endif ( ASSUAN2_FOUND )
 
 set( USABLE_ASSUAN_FOUND false )
 
-if ( ASSUAN_FOUND )
+if ( ASSUAN${ASSUAN_SUFFIX}_FOUND )
 
-  set( CMAKE_REQUIRED_INCLUDES ${ASSUAN_INCLUDES} )
+  set( CMAKE_REQUIRED_INCLUDES ${ASSUAN${ASSUAN_SUFFIX}_INCLUDES} )
 
-  if ( WIN32 AND ASSUAN_VANILLA_FOUND )
+  if ( ASSUAN2_FOUND )
+    set( CMAKE_REQUIRED_LIBRARIES ${ASSUAN2_LIBRARIES} )
+    set( USABLE_ASSUAN_FOUND true )
+  elseif ( WIN32 AND ASSUAN_VANILLA_FOUND )
     set( CMAKE_REQUIRED_LIBRARIES ${ASSUAN_VANILLA_LIBRARIES} )
     set( USABLE_ASSUAN_FOUND true )
   elseif( NOT WIN32 AND ASSUAN_PTHREAD_FOUND )
     set( CMAKE_REQUIRED_LIBRARIES ${ASSUAN_PTHREAD_LIBRARIES} )
     set( USABLE_ASSUAN_FOUND true )
-  endif( WIN32 AND ASSUAN_VANILLA_FOUND )
+  endif( ASSUAN2_FOUND )
 
   # TODO: this workaround will be removed as soon as we find better solution
   if(MINGW)
@@ -24,7 +33,7 @@ if ( ASSUAN_FOUND )
     set(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${KDEWIN32_INCLUDE_DIR}/msvc)
   endif(MINGW)
 
-endif( ASSUAN_FOUND )
+endif( ASSUAN${ASSUAN_SUFFIX}_FOUND )
 
 if ( USABLE_ASSUAN_FOUND )
   # check if assuan.h can be compiled standalone (it couldn't, on
@@ -46,7 +55,7 @@ if ( USABLE_ASSUAN_FOUND )
 
 endif( USABLE_ASSUAN_FOUND )
 
-if ( USABLE_ASSUAN_FOUND )
+if ( USABLE_ASSUAN_FOUND AND NOT ASSUAN2_FOUND )
 
   # check if assuan has assuan_fd_t
   check_cxx_source_compiles("
@@ -82,6 +91,10 @@ if ( USABLE_ASSUAN_FOUND )
         "
     HAVE_NEW_STYLE_ASSUAN_INQUIRE_EXT )
 
+endif( USABLE_ASSUAN_FOUND AND NOT ASSUAN2_FOUND )
+
+if ( USABLE_ASSUAN_FOUND )
+
   # check if gpg-error already has GPG_ERR_SOURCE_KLEO
   check_cxx_source_compiles("
         #include <gpg-error.h>
@@ -89,6 +102,10 @@ if ( USABLE_ASSUAN_FOUND )
         int main() { return 0; }
         "
     HAVE_GPG_ERR_SOURCE_KLEO )
+
+endif ( USABLE_ASSUAN_FOUND )
+
+if ( USABLE_ASSUAN_FOUND AND NOT ASSUAN2_FOUND )
 
   # check if assuan has assuan_sock_get_nonce (via assuan_sock_nonce_t)
   # function_exists runs into linking errors - libassuan is static,
@@ -105,13 +122,15 @@ if ( USABLE_ASSUAN_FOUND )
     set( USABLE_ASSUAN_FOUND false )
   endif ( WIN32 AND NOT HAVE_ASSUAN_SOCK_GET_NONCE )  
 
-endif ( USABLE_ASSUAN_FOUND )
+endif ( USABLE_ASSUAN_FOUND AND NOT ASSUAN2_FOUND )
 
 if ( USABLE_ASSUAN_FOUND )
   message( STATUS "Usable assuan found for Kleopatra" )
 else ( USABLE_ASSUAN_FOUND )
   message( STATUS "NO usable assuan found for Kleopatra" )
 endif ( USABLE_ASSUAN_FOUND )
+
+if ( NOT ASSUAN2_FOUND )
 
 #
 # Check that libassuan (which is built statically) can be linked into a DSO
@@ -120,13 +139,15 @@ endif ( USABLE_ASSUAN_FOUND )
 
 set ( ASSUAN_LINKABLE_TO_DSO false )
 
+endif ( NOT ASSUAN2_FOUND )
+
 OPTION( BUILD_libkleopatraclient "Build directory kleopatra/libkleopatraclient" ${USABLE_ASSUAN_FOUND} )
 
 if ( NOT USABLE_ASSUAN_FOUND )
   set( BUILD_libkleopatraclient false )
 endif ( NOT USABLE_ASSUAN_FOUND )
 
-if ( BUILD_libkleopatraclient )
+if ( BUILD_libkleopatraclient AND NOT ASSUAN2_FOUND )
 
   message( STATUS "Checking whether libassuan can be linked against from DSO's" )
 
@@ -148,10 +169,15 @@ if ( BUILD_libkleopatraclient )
   endif ( ASSUAN_LINKABLE_TO_DSO )
   endif ( YUP )
 
-endif ( BUILD_libkleopatraclient )
+endif ( BUILD_libkleopatraclient AND NOT ASSUAN2_FOUND )
 
 macro_bool_to_01( USABLE_ASSUAN_FOUND  HAVE_USABLE_ASSUAN )
+macro_bool_to_01( ASSUAN2_FOUND HAVE_ASSUAN2 )
+if ( ASSUAN2_FOUND )
+macro_bool_to_01( USABLE_ASSUAN_FOUND  HAVE_KLEOPATRACLIENT_LIBRARY )
+else ( ASSUAN2_FOUND )
 macro_bool_to_01( ASSUAN_LINKABLE_TO_DSO HAVE_KLEOPATRACLIENT_LIBRARY )
+endif ( ASSUAN2_FOUND )
 
 set(CMAKE_REQUIRED_INCLUDES)
 set(CMAKE_REQUIRED_LIBRARIES)

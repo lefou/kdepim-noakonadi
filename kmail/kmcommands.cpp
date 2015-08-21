@@ -801,7 +801,8 @@ static KUrl subjectToUrl( const QString &subject )
   if ( !fileName.endsWith( ".mbox" ) )
     fileName += ".mbox";
 
-  return KFileDialog::getSaveUrl( KUrl::fromPath( fileName ), "*.mbox\n*.*" );
+  const QString filter = i18n( "*.mbox|email messages (*.mbox)\n*|all files (*)" );
+  return KFileDialog::getSaveUrl( KUrl::fromPath( fileName ), filter );
 }
 
 KMSaveMsgCommand::KMSaveMsgCommand( QWidget *parent, KMMessage *msg )
@@ -2675,6 +2676,12 @@ QString KMCommand::cleanFileName( const QString &name )
   // better not use a dir-delimiter in a filename
   fileName.replace( '/', '_' );
   fileName.replace( '\\', '_' );
+
+  // replace all '.' with '_', not just at the start of the filename
+  fileName.replace( '.', '_' );
+
+  // replace all '~' with '_', not just leading '~' either.
+  fileName.replace( '~', '_' );
 
   return fileName;
 }
